@@ -1,1 +1,14 @@
-{}
+{
+  "schedules": [{
+    "name": "asbestos_funnel_datarun",
+    "options": {
+      "includeDependencies": false,
+      "fullRefresh": false
+    },
+    "cron": "24 */2 * * *",
+    "notification": {
+      "onSuccess": false,
+      "onFailure": false
+    }
+  }]
+}
