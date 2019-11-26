@@ -33,13 +33,11 @@ WITH mds AS (
     FROM
         lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
     WHERE
-        "Marketing Data C".website__c in('asbestos.com', 'pleuralmesothelioma.com', 'mesotheliomaprognosis.com')
-      --  AND utm_source__c in ('google', 'adwords', 'bing', 'facebook', 'yahoo', 'quora')      
+        "Marketing Data C".vertical__c = 'Asbestos' 
  
         AND "Marketing Data C".createddate::date > '2016-12-31'   
         AND test_or_spam__c IS false   
-       -- AND paid__c IS false
- -- and ((adwords_campaign__c not in ('1749684874', '127158429', '113139549', '228077589', '1045949468')) or (adwords_campaign__c is null))
+     
     and isdeleted is false
 
 ),
@@ -150,7 +148,7 @@ acct_meetings_scheduled AS (
     SELECT DISTINCT
         lead.marketing_data_attribution__c AS md_id,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS acct_meetings_scheduled,
-  Opportunity.stage_meeting_scheduled_date_time__c as opportunity_meetingdatetime
+ Opportunity.stage_meeting_scheduled_date_time__c as opportunity_meetingdatetime
     FROM 
         lt_pa_salesforce.account AS Account
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
@@ -217,7 +215,7 @@ meso_accounts AS (
   and lead.isdeleted is false
  and account.isdeleted is false   
   
-)--, end_data as (
+), end_data as (
 -- END CUSTOM ASBESTOS ONLY METRICS
 -- Final data selection
 SELECT DISTINCT
@@ -263,4 +261,16 @@ FROM mds AS A
     LEFT JOIN acct_sendovers AS H ON A.md_id = H.md_id
     LEFT JOIN acct_meetings_scheduled AS I ON A.md_id = I.md_id
     LEFT JOIN customers AS J ON A.md_id = J.md_id
-
+)
+select DISTINCT
+md_id,
+md_createddate,
+lead_createddate,
+account_createddate,
+sendover_date,
+meeting_date,
+customer_signeddate,
+is_customer
+from
+end_data
+where customer_signeddate::date between '2019-10-01' and '2019-10-31'

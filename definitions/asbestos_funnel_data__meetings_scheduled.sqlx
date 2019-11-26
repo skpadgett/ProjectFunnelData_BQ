@@ -1,0 +1,72 @@
+/*
+
+* Upon running this query, a table schema.table_name will be created in your warehouse, where schema is the Dataform schema defined in your dataform.json file and table_name is the name of this file
+
+* Learn more on https://docs.dataform.co/guides/datasets/
+
+*/
+
+config { type: "view" }
+
+WITH mds AS (
+    SELECT DISTINCT 
+        "Marketing Data C".id AS md_id,
+        redis_id__c,
+        createddate AS md_createddatetime,
+        CASE when id is not null then 1 else null end AS mds,
+        "Marketing Data C".adwords_campaign__c AS campaign__c,
+        "Marketing Data C".adwords_adgroup__c as adgroup__c,
+        "Marketing Data C".keyword_id__c as keyword__c,
+        "Marketing Data C".adwords_creative__c as creative__c,
+  "Marketing Data C".website__c as website,
+        CASE "Marketing Data C".utm_source__c
+            WHEN 'google' THEN 'Adwords'
+            WHEN 'adwords' THEN 'Adwords'
+            WHEN 'bing' THEN 'Bing'
+            WHEN 'facebook' THEN 'Facebook'
+  			WHEN 'yahoo' THEN 'Gemini'
+ 			WHEN 'quora' THEN 'Quora'
+        ELSE "Marketing Data C".utm_source__c end AS source,
+ "Marketing Data C".lead_type__c as lead_type,
+ case when "Marketing Data C".paid__c is true then 'Paid' else 'Organic' end as paid__c
+  
+    FROM
+        lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
+    WHERE
+        "Marketing Data C".vertical__c = 'Asbestos' 
+ 
+        AND "Marketing Data C".createddate::date > '2016-12-31'   
+        AND test_or_spam__c IS false   
+     
+    and isdeleted is false
+
+
+)--, meetings_scheduled AS (
+     -- this includes any meeting associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a meeting differs from sales.
+    SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        opportunity.id as opportunity_id,
+        opportunity.name as opportunity_name,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_meeting_scheduled,
+ Opportunity.meeting_scheduled_date__c as opportunity_meetingdatetime
+    FROM 
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
+    WHERE 
+Opportunity.meeting_scheduled_date__c IS not null  
+        -- 11/25/19 right now these criteria are causing signed cases to not show as 'meetings'. a broader discussion needs to be had regarding how we want to treat the funnel steps if a customer doesn't meet the criteria but ends up signing anyway
+        --begin marketing definitions
+        AND Account.effect__c ILIKE '%Mesothelioma%' 
+       AND Account.u_s_exposure__c = 'Yes'
+        AND Account.within_statute_of_limitations__c = 'Yes'
+        AND Account.currently_represented__c IN ('No', 'Yes, after arrival')
+         /* -- begin sales definitions
+        account.effect__c ILIKE '%Mesothelioma%'*/
+        AND account.createddate::date > '2016-08-01'
+  and lead.isdeleted is false
+  and account.isdeleted is false
+  and opportunity.isdeleted is false

@@ -1,4 +1,4 @@
 {
-    "defaultSchema": "dataform",
+    "defaultSchema": "lt_dataform",
     "assertionSchema": "dataform_assertions"
 }
