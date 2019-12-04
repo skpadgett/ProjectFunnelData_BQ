@@ -35,38 +35,51 @@ WITH mds AS (
     WHERE
         "Marketing Data C".vertical__c = 'Asbestos' 
  
-        AND "Marketing Data C".createddate::date > '2016-12-31'   
+      --  AND "Marketing Data C".createddate::date > '2016-12-31'   
         AND test_or_spam__c IS false   
      
     and isdeleted is false
 
 
-)--, meetings_scheduled AS (
-     -- this includes any meeting associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a meeting differs from sales.
+),
+customers_setup as (
     SELECT DISTINCT
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
         account.id as account_id,
         opportunity.id as opportunity_id,
+        account.effect__c as account_effect,
         opportunity.name as opportunity_name,
-        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_meeting_scheduled,
- Opportunity.meeting_scheduled_date__c as opportunity_meetingdatetime
+        COALESCE(Opportunity.signing_value_override__c,Opportunity.signing_value__c) AS signing_value,
+        case when Opportunity.signing_value__c is not null then 1 else 0 end as is_customer,
+        Opportunity.stage_signed_date_time__c as opportunity_signeddatetime
     FROM 
         lt_pa_salesforce.account AS Account
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
         INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
         INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
     WHERE 
-Opportunity.meeting_scheduled_date__c IS not null  
-        -- 11/25/19 right now these criteria are causing signed cases to not show as 'meetings'. a broader discussion needs to be had regarding how we want to treat the funnel steps if a customer doesn't meet the criteria but ends up signing anyway
-        --begin marketing definitions
-        AND Account.effect__c ILIKE '%Mesothelioma%' 
-       AND Account.u_s_exposure__c = 'Yes'
-        AND Account.within_statute_of_limitations__c = 'Yes'
-        AND Account.currently_represented__c IN ('No', 'Yes, after arrival')
-         /* -- begin sales definitions
-        account.effect__c ILIKE '%Mesothelioma%'*/
-        AND account.createddate::date > '2016-08-01'
+    --account.effect__c changed from ILIKE '%Mesothelioma%' to = 'Mesothelioma' in 12/2019 
+        Account.effect__c = 'Mesothelioma'
+        AND Opportunity.stage_signed_date_time__c is not null
+      --  AND account.createddate::date > '2016-08-01'
   and lead.isdeleted is false
   and account.isdeleted is false
   and opportunity.isdeleted is false
+)--,customers AS (
+    SELECT DISTINCT
+        md_id,
+        lead_id,
+        account_id,
+        opportunity_id,
+        account_effect,
+        signing_value,
+        is_customer,
+  		opportunity_signeddatetime,
+        opportunity_name
+    FROM
+        customers_setup
+    WHERE
+        signing_value > 0
+
+

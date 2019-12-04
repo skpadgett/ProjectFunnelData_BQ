@@ -32,24 +32,32 @@ WITH mds AS (
   
     FROM
         lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
-    WHERE "Marketing Data C".vertical__c = 'Asbestos'
-      --   AND "Marketing Data C".createddate::date > '2016-12-31'   
+    WHERE
+        "Marketing Data C".vertical__c = 'Asbestos' 
+ 
+      --  AND "Marketing Data C".createddate::date > '2016-12-31'   
         AND test_or_spam__c IS false   
-      
+     
     and isdeleted is false
 
-)--,leads AS (     
-    SELECT DISTINCT 
+)--,accounts AS (   
+    SELECT DISTINCT
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
         lead.createddate as lead_createddatetime,
-        CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_lead
- 
+        account.id as account_id,
+        account.effect__c,
+        account.createddate as account_createddatetime,
+        CASE when account.id is not null then 1 else null end AS is_account
+
     FROM
-        lt_pa_salesforce.lead AS Lead 
-        INNER JOIN mds on Lead.marketing_data_attribution__c = mds.md_id
-    WHERE
-        Lead.test_or_spam__c IS FALSE        
-        AND Lead.source__c NOT ILIKE '%PA%DID%'
-      --  AND Lead.createddate::date > '2016-12-31'
+        lt_pa_salesforce.account AS Account 
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+    WHERE 
+     --   account.parent_campaign_name__c ILIKE '%paid%' AND
+         account.test__c IS false 
+    --    AND account.createddate::date > '2016-08-01'
   and lead.isdeleted is false
+  and account.isdeleted is false
+

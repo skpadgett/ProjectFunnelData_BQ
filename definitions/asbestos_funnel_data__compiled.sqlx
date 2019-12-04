@@ -1,0 +1,373 @@
+/*
+
+* Upon running this query, a table schema.table_name will be created in your warehouse, where schema is the Dataform schema defined in your dataform.json file and table_name is the name of this file
+
+* Learn more on https://docs.dataform.co/guides/datasets/
+
+*/
+
+config { type: "view" }
+with mds as (
+ SELECT DISTINCT 
+        "Marketing Data C".id AS md_id,
+        redis_id__c as redis_id,
+        createddate AS md_createddatetime,
+        CASE when id is not null then 1 else null end AS is_md,
+        "Marketing Data C".adwords_campaign__c AS ads_campaign,
+        "Marketing Data C".adwords_adgroup__c as ads_adgroup,
+        "Marketing Data C".keyword_id__c as ads_keyword,
+        "Marketing Data C".adwords_creative__c as ads_creative,
+  "Marketing Data C".website__c as website,
+        CASE "Marketing Data C".utm_source__c
+            WHEN 'google' THEN 'Adwords'
+            WHEN 'adwords' THEN 'Adwords'
+            WHEN 'bing' THEN 'Bing'
+            WHEN 'facebook' THEN 'Facebook'
+  			WHEN 'yahoo' THEN 'Gemini'
+ 			WHEN 'quora' THEN 'Quora'
+        ELSE "Marketing Data C".utm_source__c end AS utm_source,
+        "Marketing Data C".marketing_channels__c as marketing_channels,
+ "Marketing Data C".lead_type__c as lead_type,
+ "Marketing Data C".effect__c as md_effect,
+ case when "Marketing Data C".paid__c is true then 'Paid' else 'Organic' end as paid
+  
+    FROM
+        lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
+    WHERE
+    "Marketing Data C".vertical__c = 'Asbestos'
+      -- AND "Marketing Data C".createddate::date > '2016-12-31'   
+        AND test_or_spam__c IS false   
+    and isdeleted is false
+
+),
+leads AS (     
+    SELECT DISTINCT 
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        lead.createddate as lead_createddatetime,
+        CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_lead
+ 
+    FROM
+        lt_pa_salesforce.lead AS Lead 
+        INNER JOIN mds on Lead.marketing_data_attribution__c = mds.md_id
+    WHERE
+        Lead.test_or_spam__c IS FALSE        
+        AND Lead.source__c NOT ILIKE '%PA%DID%'
+      --  AND Lead.createddate::date > '2016-12-31'
+  and lead.isdeleted is false
+
+),     
+qualified_leads AS (
+       SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        account.createddate as account_createddatetime,
+        CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_qualified_lead
+    FROM
+        lt_pa_salesforce.account AS Account 
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+    WHERE
+        Account.u_s_exposure__c IN ('Yes', 'Unknown')        
+        AND Account.currently_represented__c IN ('Unknown','No', 'Yes, after arrival')        
+        AND Account.effect__c ILIKE '%Mesothelioma%'   
+      --  and Account.createddate::date > '2016-08-01'
+      
+  and lead.isdeleted is false
+  and account.isdeleted is false
+),
+customers_setup as (
+    SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        opportunity.id as opportunity_id,
+        account.effect__c as account_effect,
+        opportunity.name as opportunity_name,
+        COALESCE(Opportunity.signing_value_override__c,Opportunity.signing_value__c) AS signing_value,
+        case when Opportunity.signing_value__c is not null then 1 else 0 end as is_customer,
+        Opportunity.stage_signed_date_time__c as opportunity_signeddatetime
+    FROM 
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
+    WHERE 
+    --account.effect__c changed from ILIKE '%Mesothelioma%' to = 'Mesothelioma' in 12/2019 
+        Account.effect__c = 'Mesothelioma'
+        AND Opportunity.stage_signed_date_time__c is not null
+      --  AND account.createddate::date > '2016-08-01'
+  and lead.isdeleted is false
+  and account.isdeleted is false
+  and opportunity.isdeleted is false
+),
+customers AS (
+    SELECT DISTINCT
+        md_id,
+        lead_id,
+        account_id,
+        opportunity_id,
+        account_effect,
+        signing_value,
+        is_customer,
+  		opportunity_signeddatetime,
+        opportunity_name
+    FROM
+        customers_setup
+    WHERE
+        signing_value > 0
+),
+-- START CUSTOM ASBESTOS ONLY METRICS
+viables AS (
+   SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_viable
+    FROM
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+    WHERE Account.first_viable_date__c IS NOT NULL
+  -- we removed account.viable_rollback__c is 'false' or null in 11/2019 after learning more about how the viable field is populated. We are replacing it with account.effect_ever_meso is 'true'
+  and Account.effect_ever_meso__c is true
+      --  AND Account.createddate::date > '2016-08-01'
+  and lead.isdeleted is false
+  and account.isdeleted is false
+),
+all_sendovers AS (
+     -- this includes any sendover associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a sendover differs from sales.
+    SELECT DISTINCT 
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        opportunity.id as opportunity_id,
+        opportunity.name as opportunity_name,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_sendover,
+  Opportunity.stage_sendover_date_time__c as opportunity_sendoverdatetime
+    FROM 
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN lt_pa_salesforce.opportunity AS Opportunity ON account.id = opportunity.accountid
+    WHERE
+        Account.opportunity__c IS NOT NULL
+        AND Opportunity.stage_sendover_date_time__c IS NOT NULL
+         -- 11/25/19 right now these criteria are causing signed cases to not show as 'meetings'. a broader discussion needs to be had regarding how we want to treat the funnel steps if a customer doesn't meet the criteria but ends up signing anyway
+         --begin marketing definitions
+        AND  Account.u_s_exposure__c = 'Yes'
+        AND Opportunity.effect__c ILIKE '%Mesothelioma%'
+        AND Account.within_statute_of_limitations__c = 'Yes'
+        AND Account.currently_represented__c IN ('No', 'Yes, after arrival')
+        -- begin sales definitions
+        /*AND Account.effect__c IN ('Mesothelioma', 'Unconfirmed Mesothelioma')
+       AND (Account.u_s_exposure__c = 'Yes')
+       AND Opportunity.is_first_sent_over_opportunity__c IS TRUE*/
+       -- AND account.createddate::date > '2016-08-01'
+  and lead.isdeleted is false
+  and account.isdeleted is false
+  and opportunity.isdeleted is false
+
+), first_sendovers AS (
+  -- this includes any sendover associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a sendover differs from sales. Marketing sendovers will be called 'all sendovers' and Sales sendovers will be called 'first sendover'
+    SELECT DISTINCT 
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        opportunity.id as opportunity_id,
+        opportunity.name as opportunity_name,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_first_sendover,
+  Opportunity.stage_sendover_date_time__c as opportunity_sendoverdatetime
+    FROM 
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN lt_pa_salesforce.opportunity AS Opportunity ON account.id = opportunity.accountid
+    WHERE
+         Account.opportunity__c IS NOT NULL
+        AND Opportunity.stage_sendover_date_time__c IS NOT NULL
+         -- 11/25/19 right now these criteria are causing signed cases to not show as 'meetings'. a broader discussion needs to be had regarding how we want to treat the funnel steps if a customer doesn't meet the criteria but ends up signing anyway
+        /* --begin marketing definitions
+         AND  Account.u_s_exposure__c = 'Yes'
+        AND Opportunity.effect__c ILIKE '%Mesothelioma%'
+        AND Account.within_statute_of_limitations__c = 'Yes'
+        AND Account.currently_represented__c IN ('No', 'Yes, after arrival')*/
+        -- begin sales definitions
+        AND Account.effect__c IN ('Mesothelioma', 'Unconfirmed Mesothelioma')
+       AND (Account.u_s_exposure__c = 'Yes')
+       AND Opportunity.is_first_sent_over_opportunity__c IS TRUE
+       -- AND account.createddate::date > '2016-08-01'
+  and lead.isdeleted is false
+  and account.isdeleted is false
+  and opportunity.isdeleted is false
+),
+qualified_meetings_scheduled AS (
+   -- this includes any meeting associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a meeting differs from sales. Marketing definitions will be called 'qualified meetings' while sales definitions will be 'all meetings'
+    SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        opportunity.id as opportunity_id,
+        opportunity.name as opportunity_name,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_qualified_meeting_scheduled,
+ Opportunity.meeting_scheduled_date__c as opportunity_meetingdatetime
+    FROM 
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
+    WHERE 
+Opportunity.meeting_scheduled_date__c IS not null  
+ --  AND account.createddate::date > '2016-08-01'
+        -- 11/25/19 right now these criteria are causing signed cases to not show as 'meetings'. a broader discussion needs to be had regarding how we want to treat the funnel steps if a customer doesn't meet the criteria but ends up signing anyway
+        --begin marketing definitions
+        AND Account.effect__c ILIKE '%Mesothelioma%' 
+       AND Account.u_s_exposure__c = 'Yes'
+        AND Account.within_statute_of_limitations__c = 'Yes'
+        AND Account.currently_represented__c IN ('No', 'Yes, after arrival')
+          -- begin sales definitions
+       /* AND account.effect__c ILIKE '%Mesothelioma%' */
+     
+  and lead.isdeleted is false
+  and account.isdeleted is false
+  and opportunity.isdeleted is false
+),
+  all_meetings_scheduled AS (
+     -- this includes any meeting associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a meeting differs from sales. Marketing definitions will be called 'qualified meetings' while sales definitions will be 'all meetings'
+    SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        opportunity.id as opportunity_id,
+        opportunity.name as opportunity_name,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_meeting_scheduled,
+ Opportunity.meeting_scheduled_date__c as opportunity_meetingdatetime
+    FROM 
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
+    WHERE 
+Opportunity.meeting_scheduled_date__c IS not null  
+ --  AND account.createddate::date > '2016-08-01'
+        -- 11/25/19 right now these criteria are causing signed cases to not show as 'meetings'. a broader discussion needs to be had regarding how we want to treat the funnel steps if a customer doesn't meet the criteria but ends up signing anyway
+       /* --begin marketing definitions
+        AND Account.effect__c ILIKE '%Mesothelioma%' 
+       AND Account.u_s_exposure__c = 'Yes'
+        AND Account.within_statute_of_limitations__c = 'Yes'
+        AND Account.currently_represented__c IN ('No', 'Yes, after arrival')*/
+          -- begin sales definitions
+        AND account.effect__c ILIKE '%Mesothelioma%' 
+     
+  and lead.isdeleted is false
+  and account.isdeleted is false
+  and opportunity.isdeleted is false
+  ),
+meso_form_leads AS ( 
+SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        lead.createddate as lead_createddatetime,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_meso_form_lead
+    FROM
+        lt_pa_salesforce.lead AS Lead  
+        INNER JOIN mds AS mds ON Lead.marketing_data_attribution__c = mds.md_id
+    WHERE
+        Lead.test_or_spam__c IS FALSE        
+     --   AND Lead.createddate::date > '2016-12-31'
+        AND lead.effect__c ILIKE '%Mesothelioma%'  
+      --  AND lead.parent_campaign_name__c ILIKE '%paid%'   
+        AND mds.lead_type IN ('Form')  
+        AND Lead.source__c NOT ILIKE '%PA%DID%'
+  and lead.isdeleted is false
+),
+accounts AS (   
+      SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        lead.createddate as lead_createddatetime,
+        account.id as account_id,
+        account.effect__c,
+        account.createddate as account_createddatetime,
+        CASE when account.id is not null then 1 else null end AS is_account
+
+    FROM
+        lt_pa_salesforce.account AS Account 
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+    WHERE 
+     --   account.parent_campaign_name__c ILIKE '%paid%' AND
+         account.test__c IS false 
+    --    AND account.createddate::date > '2016-08-01'
+  and lead.isdeleted is false
+  and account.isdeleted is false
+),   
+meso_accounts AS (   
+    SELECT DISTINCT 
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        account.createddate as account_createddatetime,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_meso_account
+    FROM
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+    WHERE 
+       -- account.parent_campaign_name__c ILIKE '%paid%'  AND
+        account.effect__c ILIKE '%Mesothelioma%'    
+        AND account.test__c IS false
+      --  AND account.createddate::date > '2016-08-01'
+  and lead.isdeleted is false
+ and account.isdeleted is false    
+  
+)--, end_data as (
+-- END CUSTOM ASBESTOS ONLY METRICS
+-- Final data selection
+SELECT DISTINCT
+    A.md_id,
+    A.redis_id AS lead_id,
+    A.md_createddatetime::timestamp AS md_createddate,
+	B.lead_createddatetime::timestamp as lead_createddate,
+	D.account_createddatetime::timestamp as account_createddate,
+	L.opportunity_signeddatetime::timestamp as customer_signeddate,
+    CASE A.utm_source
+        WHEN 'AdWords' THEN '1'::varchar
+        WHEN 'Bing' THEN '2'::varchar
+    ELSE '-1'::varchar end AS account_id,
+    A.ads_campaign::varchar AS campaign_id,
+    A.ads_adgroup::varchar AS adgroup_id,
+    A.ads_keyword::varchar AS keyword_id,
+    A.ads_creative::varchar AS creative_id,
+      A.utm_source::varchar,
+  A.website::varchar,
+  A.lead_type::varchar,
+  A.paid::varchar,
+    COALESCE(A.is_md,0)::int2 AS is_md,
+    COALESCE(B.is_lead,0)::int2 AS is_lead,
+   COALESCE(C.is_meso_form_lead,0)::int2 as is_meso_form_lead,
+  COALESCE(D.is_account,0)::int2 as is_account,
+  COALESCE(E.is_meso_account,0)::int2 as is_meso_account,
+      COALESCE(F.is_qualified_lead,0)::int2 AS is_qualified_lead,
+  COALESCE(G.is_viable,0)::int2 as is_viable,
+  COALESCE(H.is_all_sendover,0)::int2 as is_all_sendover,
+  COALESCE(I.is_first_sendover,0)::int2 as is_first_sendover,
+  COALESCE(J.is_qualified_meeting_scheduled,0)::int2 as is_qualified_meeting_scheduled,
+  COALESCE(K.is_all_meeting_scheduled,0)::int2 as is_all_meeting_scheduled,
+    COALESCE(L.is_customer,0)::decimal(4,2) AS is_customer
+
+  
+FROM mds AS A
+    LEFT JOIN leads AS B ON A.md_id = B.md_id
+    LEFT JOIN meso_form_leads AS C ON A.md_id = C.md_id
+    LEFT JOIN accounts AS D ON A.md_id = D.md_id
+    LEFT JOIN meso_accounts AS E ON A.md_id = E.md_id
+    LEFT JOIN qualified_leads AS F ON A.md_id = F.md_id
+    LEFT JOIN viables AS G ON A.md_id = G.md_id
+    LEFT JOIN all_sendovers AS H ON A.md_id = H.md_id
+    LEFT JOIN first_sendovers AS I ON A.md_id = I.md_id
+    LEFT JOIN qualified_meetings_scheduled AS J ON A.md_id = J.md_id
+    LEFT JOIN all_meetings_scheduled as K on A.md_id = K.md_id
+    LEFT JOIN customers AS L ON A.md_id = L.md_id
+
