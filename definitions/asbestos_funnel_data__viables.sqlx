@@ -45,6 +45,7 @@ WITH mds AS (
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
         account.id as account_id,
+        account.createddate as account_createddatetime,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_viable
     FROM
         lt_pa_salesforce.account AS Account
