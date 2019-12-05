@@ -64,7 +64,7 @@ Opportunity.meeting_scheduled_date__c IS not null
         AND Account.effect__c ILIKE '%Mesothelioma%' 
        AND Account.u_s_exposure__c = 'Yes'
         AND Account.within_statute_of_limitations__c = 'Yes'
-        AND Account.currently_represented__c IN ('No', 'Yes, after arrival')
+        AND Account.currently_represented__c IN ('No', 'Yes, after arrival', 'Unknown')
           -- begin sales definitions
        /* AND account.effect__c ILIKE '%Mesothelioma%' */
      
