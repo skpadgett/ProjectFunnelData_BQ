@@ -8,7 +8,7 @@
 
 config { type: "view" }
 
-WITH mds AS (
+/*WITH mds AS (
     SELECT DISTINCT 
         "Marketing Data C".id AS md_id,
         redis_id__c,
@@ -40,7 +40,7 @@ WITH mds AS (
      
     and isdeleted is false
 
-)--,accounts AS (   
+)--,accounts AS (   */
     SELECT DISTINCT
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
@@ -53,7 +53,7 @@ WITH mds AS (
     FROM
         lt_pa_salesforce.account AS Account 
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
-        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
     WHERE 
      --   account.parent_campaign_name__c ILIKE '%paid%' AND
          account.test__c IS false 

@@ -8,7 +8,7 @@
 
 config { type: "view" }
 
-WITH mds AS (
+/*WITH mds AS (
     SELECT DISTINCT 
         "Marketing Data C".id AS md_id,
         redis_id__c,
@@ -41,7 +41,7 @@ WITH mds AS (
     and isdeleted is false
 
 
-)--, first_sendovers AS (
+)--, first_sendovers AS (*/
   -- this includes any sendover associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a sendover differs from sales. Marketing sendovers will be called 'all sendovers' and Sales sendovers will be called 'first sendover'
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
@@ -54,7 +54,7 @@ WITH mds AS (
     FROM 
         lt_pa_salesforce.account AS Account
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
-        INNER JOIN mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
         INNER JOIN lt_pa_salesforce.opportunity AS Opportunity ON account.id = opportunity.accountid
     WHERE
          Account.opportunity__c IS NOT NULL

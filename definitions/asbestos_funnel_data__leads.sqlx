@@ -8,7 +8,7 @@
 
 config { type: "view" }
 
-WITH mds AS (
+/*WITH mds AS (
     SELECT DISTINCT 
         "Marketing Data C".id AS md_id,
         redis_id__c,
@@ -38,7 +38,7 @@ WITH mds AS (
       
     and isdeleted is false
 
-)--,leads AS (     
+)--,leads AS ( */    
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
@@ -47,7 +47,7 @@ WITH mds AS (
  
     FROM
         lt_pa_salesforce.lead AS Lead 
-        INNER JOIN mds on Lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds on Lead.marketing_data_attribution__c = mds.md_id
     WHERE
         Lead.test_or_spam__c IS FALSE        
         AND Lead.source__c NOT ILIKE '%PA%DID%'
