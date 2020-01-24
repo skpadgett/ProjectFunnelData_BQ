@@ -8,40 +8,6 @@
 
 config { type: "view" }
 
-/*WITH mds AS (
-    SELECT DISTINCT 
-        "Marketing Data C".id AS md_id,
-        redis_id__c,
-        createddate AS md_createddatetime,
-        CASE when id is not null then 1 else null end AS mds,
-        "Marketing Data C".adwords_campaign__c AS campaign__c,
-        "Marketing Data C".adwords_adgroup__c as adgroup__c,
-        "Marketing Data C".keyword_id__c as keyword__c,
-        "Marketing Data C".adwords_creative__c as creative__c,
-  "Marketing Data C".website__c as website,
-        CASE "Marketing Data C".utm_source__c
-            WHEN 'google' THEN 'Adwords'
-            WHEN 'adwords' THEN 'Adwords'
-            WHEN 'bing' THEN 'Bing'
-            WHEN 'facebook' THEN 'Facebook'
-  			WHEN 'yahoo' THEN 'Gemini'
- 			WHEN 'quora' THEN 'Quora'
-        ELSE "Marketing Data C".utm_source__c end AS source,
- "Marketing Data C".lead_type__c as lead_type,
- case when "Marketing Data C".paid__c is true then 'Paid' else 'Organic' end as paid__c
-  
-    FROM
-        lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
-    WHERE
-        "Marketing Data C".vertical__c = 'Asbestos' 
- 
-      --  AND "Marketing Data C".createddate::date > '2016-12-31'   
-        AND test_or_spam__c IS false   
-     
-    and isdeleted is false
-
-
-)--, first_sendovers AS (*/
   -- this includes any sendover associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a sendover differs from sales. Marketing sendovers will be called 'all sendovers' and Sales sendovers will be called 'first sendover'
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
