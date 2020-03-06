@@ -7,7 +7,7 @@
 */
 
 config { type: "view" }
-with base as (
+
   -- Final data selection
 SELECT DISTINCT
 A.md_id,
@@ -72,8 +72,3 @@ LEFT JOIN ${ref('asbestos_funnel_data__qualified_first_meetings_scheduled')} as 
 LEFT JOIN ${ref('asbestos_funnel_data__all_sendovers')} as R on O.opportunity_id = R.opportunity_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_meetings_scheduled')} as S on O.opportunity_id = S.opportunity_id
 
-)
-select DISTINCT
-sum(signing_value)
-from base
-where customer_signeddate::date between '2020-02-01' and '2020-02-29'
