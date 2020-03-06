@@ -29,11 +29,11 @@ with customers_setup as (
     --account.effect__c changed from ILIKE '%Mesothelioma%' to = 'Mesothelioma' in 12/2019 
         Account.effect__c = 'Mesothelioma'
         AND Opportunity.stage_signed_date_time__c is not null
-      --  AND account.createddate::date > '2016-08-01'
+
   and lead.isdeleted is false
   and account.isdeleted is false
   and opportunity.isdeleted is false
-)--,customers AS (
+)
     SELECT DISTINCT
         md_id,
         lead_id,
@@ -47,6 +47,5 @@ with customers_setup as (
     FROM
         customers_setup
     WHERE
-        signing_value > 0
-
+        signing_value in (0.25, 1)
 

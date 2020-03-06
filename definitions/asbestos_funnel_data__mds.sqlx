@@ -29,13 +29,13 @@ config { type: "view" }
         "Marketing Data C".marketing_channels__c as marketing_channels,
  "Marketing Data C".lead_type__c as lead_type,
  "Marketing Data C".effect__c as md_effect,
+ "Marketing Data C".traffic_source__c,
  case when "Marketing Data C".paid__c is true then 'Paid' else 'Organic' end as paid
   
     FROM
         lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
     WHERE
     "Marketing Data C".vertical__c = 'Asbestos'
-      -- AND "Marketing Data C".createddate::date > '2016-12-31'   
         AND test_or_spam__c IS false   
     and isdeleted is false
 

@@ -1,0 +1,47 @@
+
+/* Learn more on https://docs.dataform.co/guides/datasets/
+
+*/
+
+config { type: "view" }
+
+
+     -- this includes any meeting associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. 
+    with first_meeting_date as (
+         select DISTINCT
+         account.id as account_id,
+         min(Opportunity.meeting_scheduled_date__c) as first_meeting_scheduled_date
+         from 
+           lt_pa_salesforce.account 
+           INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
+    WHERE 
+Opportunity.meeting_scheduled_date__c IS not null  
+group by 1
+
+     )
+    SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        first_meeting_date.account_id as account_id,
+        opportunity.id as opportunity_id,
+        opportunity.name as opportunity_name,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_qualified_first_meeting_scheduled,
+first_meeting_date.first_meeting_scheduled_date as qualified_first_meeting_scheduleddatetime
+
+    FROM 
+    first_meeting_date
+       inner join lt_pa_salesforce.account AS Account on first_meeting_date.account_id = account.id
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
+        INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid and first_meeting_date.first_meeting_scheduled_date = opportunity.meeting_scheduled_date__c
+    WHERE 
+Opportunity.meeting_scheduled_date__c IS not null  
+        AND Account.effect__c ILIKE '%Mesothelioma%' 
+       AND Account.u_s_exposure__c = 'Yes'
+        AND Account.within_statute_of_limitations__c = 'Yes'
+
+     
+  and lead.isdeleted is false
+  and account.isdeleted is false
+  and opportunity.isdeleted is false
+ 

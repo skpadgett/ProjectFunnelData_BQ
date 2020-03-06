@@ -8,15 +8,19 @@
 
 config { type: "view" }
 
-  -- this includes any sendover associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. Also, marketing definition of a sendover differs from sales. Marketing sendovers will be called 'all sendovers' and Sales sendovers will be called 'first sendover'
+  -- this includes any sendover associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. 
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
         account.id as account_id,
         opportunity.id as opportunity_id,
         opportunity.name as opportunity_name,
+        account.effect__c as effect,
+        account.u_s_exposure__c as u_s_exposure,
+        account.within_statute_of_limitations__c as within_statute_of_limitiations,
+        account.currently_represented__c as currently_represented,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_sendover,
-  Opportunity.stage_sendover_date_time__c as opportunity_sendoverdatetime
+  Opportunity.stage_sendover_date_time__c as all_sendoverdatetime
     FROM 
         lt_pa_salesforce.account AS Account
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
@@ -25,17 +29,6 @@ config { type: "view" }
     WHERE
          Account.opportunity__c IS NOT NULL
         AND Opportunity.stage_sendover_date_time__c IS NOT NULL
-         -- 11/25/19 right now these criteria are causing signed cases to not show as 'meetings'. a broader discussion needs to be had regarding how we want to treat the funnel steps if a customer doesn't meet the criteria but ends up signing anyway
-         --begin marketing definitions
-         AND  Account.u_s_exposure__c = 'Yes'
-        AND Opportunity.effect__c ILIKE '%Mesothelioma%'
-        AND Account.within_statute_of_limitations__c = 'Yes'
-        AND Account.currently_represented__c IN ('No', 'Yes, after arrival')
-        -- begin sales definitions
-        /*AND Account.effect__c IN ('Mesothelioma', 'Unconfirmed Mesothelioma')
-       AND (Account.u_s_exposure__c = 'Yes')
-       AND Opportunity.is_first_sent_over_opportunity__c IS TRUE*/
-       -- AND account.createddate::date > '2016-08-01'
   and lead.isdeleted is false
   and account.isdeleted is false
   and opportunity.isdeleted is false

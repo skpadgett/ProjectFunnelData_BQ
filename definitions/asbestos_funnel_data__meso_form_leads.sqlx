@@ -19,9 +19,7 @@ config { type: "view" }
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON Lead.marketing_data_attribution__c = mds.md_id
     WHERE
         Lead.test_or_spam__c IS FALSE        
-     --   AND Lead.createddate::date > '2016-12-31'
-        AND lead.effect__c ILIKE '%Mesothelioma%'  
-      --  AND lead.parent_campaign_name__c ILIKE '%paid%'   
+        AND lead.effect__c ILIKE '%Mesothelioma%'    
         AND mds.lead_type IN ('Form')  
         AND Lead.source__c NOT ILIKE '%PA%DID%'
   and lead.isdeleted is false

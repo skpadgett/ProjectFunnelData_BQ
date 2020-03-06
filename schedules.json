@@ -1,7 +1,7 @@
 {
   "schedules": [{
     "name": "asbestos_funnel_datarun",
-    "disabled": true,
+    "disabled": false,
     "options": {
       "includeDependencies": false,
       "fullRefresh": false

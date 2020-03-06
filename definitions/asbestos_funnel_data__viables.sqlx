@@ -21,7 +21,8 @@ config { type: "view" }
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
     WHERE Account.first_viable_date__c IS NOT NULL
   -- we removed account.viable_rollback__c is 'false' or null in 11/2019 after learning more about how the viable field is populated. We are replacing it with account.effect_ever_meso is 'true'
-  and Account.effect_ever_meso__c is true
-      --  AND Account.createddate::date > '2016-08-01'
+  -- per request from the marketing team, we changed 'viable_rollback__c' back to 'false' and added 'effect__c' contains 'mesothelioma' in order to get rid of unwanted viables that appear due to legacy code in SF (lung cancer can also be viable based on the viable formula)
+  and Account.effect__c ilike '%Mesothelioma%'
+  and account.viable_rollback__c is false
   and lead.isdeleted is false
   and account.isdeleted is false

@@ -22,9 +22,7 @@ config { type: "view" }
     WHERE
         Account.u_s_exposure__c IN ('Yes', 'Unknown')        
         AND Account.currently_represented__c IN ('Unknown','No', 'Yes, after arrival')        
-        AND Account.effect__c ILIKE '%Mesothelioma%'   
-      --  and Account.createddate::date > '2016-08-01'
-      
+        AND Account.effect__c ILIKE '%Mesothelioma%'         
   and lead.isdeleted is false
   and account.isdeleted is false
 

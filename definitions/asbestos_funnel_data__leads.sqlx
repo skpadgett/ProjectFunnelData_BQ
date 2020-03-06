@@ -21,5 +21,4 @@ config { type: "view" }
     WHERE
         Lead.test_or_spam__c IS FALSE        
         AND Lead.source__c NOT ILIKE '%PA%DID%'
-      --  AND Lead.createddate::date > '2016-12-31'
   and lead.isdeleted is false

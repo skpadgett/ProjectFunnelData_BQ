@@ -23,9 +23,7 @@ config { type: "view" }
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
     WHERE 
-     --   account.parent_campaign_name__c ILIKE '%paid%' AND
          account.test__c IS false 
-    --    AND account.createddate::date > '2016-08-01'
   and lead.isdeleted is false
   and account.isdeleted is false
 
