@@ -25,6 +25,7 @@ config { type: "view" }
             WHEN 'facebook' THEN 'Facebook'
   			WHEN 'yahoo' THEN 'Gemini'
  			WHEN 'quora' THEN 'Quora'
+            WHEN 'steelhouse' THEN 'Steelhouse'
         ELSE "Marketing Data C".utm_source__c end AS utm_source,
         "Marketing Data C".marketing_channels__c as marketing_channels,
  "Marketing Data C".lead_type__c as lead_type,
