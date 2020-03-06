@@ -32,6 +32,7 @@ A.ads_adgroup::varchar AS adgroup_id,
 A.ads_keyword::varchar AS keyword_id,
 A.ads_creative::varchar AS creative_id,
 A.utm_source::varchar,
+A.traffic_source__c::varchar as traffic_source,
 A.website::varchar,
 A.lead_type::varchar,
 A.paid::varchar,
@@ -71,4 +72,5 @@ LEFT JOIN ${ref('asbestos_funnel_data__qualified_first_sendovers')} as P on I.ac
 LEFT JOIN ${ref('asbestos_funnel_data__qualified_first_meetings_scheduled')} as Q on L.account_id = Q.account_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_sendovers')} as R on O.opportunity_id = R.opportunity_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_meetings_scheduled')} as S on O.opportunity_id = S.opportunity_id
+
 
