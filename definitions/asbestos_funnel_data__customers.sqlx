@@ -17,6 +17,7 @@ with customers_setup as (
         opportunity.id as opportunity_id,
         account.effect__c as account_effect,
         opportunity.name as opportunity_name,
+        ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
         COALESCE(Opportunity.signing_value_override__c,Opportunity.signing_value__c) AS signing_value,
         case when Opportunity.signing_value__c is not null then 1 else 0 end as is_customer,
         Opportunity.stage_signed_date_time__c as opportunity_signeddatetime
@@ -43,7 +44,9 @@ with customers_setup as (
         signing_value,
         is_customer,
   		opportunity_signeddatetime,
-        opportunity_name
+        opportunity_name,
+        opportunity_law_firm
+
     FROM
         customers_setup
     WHERE

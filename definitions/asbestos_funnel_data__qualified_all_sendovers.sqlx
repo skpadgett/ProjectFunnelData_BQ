@@ -15,6 +15,7 @@ config { type: "view" }
         account.id as account_id,
         opportunity.id as opportunity_id,
         opportunity.name as opportunity_name,
+        ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_qualified_all_sendover,
   Opportunity.stage_sendover_date_time__c as qualified_all_sendoverdatetime
     FROM 

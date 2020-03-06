@@ -7,7 +7,7 @@
 */
 
 config { type: "view" }
-
+with base as (
   -- Final data selection
 SELECT DISTINCT
 A.md_id,
@@ -20,6 +20,9 @@ A.md_createddatetime::timestamp AS md_createddate,
   Q.qualified_first_meeting_scheduleddatetime::timestamp as qualified_first_meeting_schedueddatetime,
   S.all_meeting_scheduleddatetime::timestamp as signed_opp_meeting_scheduleddatetime,
   O.opportunity_signeddatetime::timestamp as customer_signeddate,
+  J.opportunity_law_firm::varchar as qualified_first_sendover_law_firm,
+  M.opportunity_law_firm::varchar as qualified_first_meeting_scheduled_law_firm,
+  O.opportunity_law_firm::varchar as signed_opp_law_firm,
 CASE A.utm_source
 WHEN 'AdWords' THEN '1'::varchar
 WHEN 'Bing' THEN '2'::varchar
@@ -69,3 +72,8 @@ LEFT JOIN ${ref('asbestos_funnel_data__qualified_first_meetings_scheduled')} as 
 LEFT JOIN ${ref('asbestos_funnel_data__all_sendovers')} as R on O.opportunity_id = R.opportunity_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_meetings_scheduled')} as S on O.opportunity_id = S.opportunity_id
 
+)
+select DISTINCT
+sum(signing_value)
+from base
+where customer_signeddate::date between '2020-02-01' and '2020-02-29'

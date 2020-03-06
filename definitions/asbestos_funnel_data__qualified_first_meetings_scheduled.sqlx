@@ -25,6 +25,7 @@ group by 1
         first_meeting_date.account_id as account_id,
         opportunity.id as opportunity_id,
         opportunity.name as opportunity_name,
+        ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_qualified_first_meeting_scheduled,
 first_meeting_date.first_meeting_scheduled_date as qualified_first_meeting_scheduleddatetime
 

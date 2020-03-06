@@ -16,6 +16,7 @@ config { type: "view" }
         account.id as account_id,
         opportunity.id as opportunity_id,
         opportunity.name as opportunity_name,
+        ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
         account.effect__c as effect,
         account.u_s_exposure__c as u_s_exposure,
         account.within_statute_of_limitations__c as within_statute_of_limitiations,
