@@ -1,15 +1,15 @@
 {
   "schedules": [{
-    "name": "asbestos_funnel_datarun",
-    "disabled": false,
+    "name": "asbestos_funnel",
     "options": {
-      "includeDependencies": false,
+      "includeDependencies": true,
       "fullRefresh": false
     },
-    "cron": "33 */1 * * *",
+    "cron": "0 */1 * * *",
     "notification": {
       "onSuccess": false,
       "onFailure": false
-    }
+    },
+    "notifications": [{}]
   }]
 }
