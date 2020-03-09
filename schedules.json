@@ -6,7 +6,7 @@
       "includeDependencies": false,
       "fullRefresh": false
     },
-    "cron": "24 */2 * * *",
+    "cron": "33 */1 * * *",
     "notification": {
       "onSuccess": false,
       "onFailure": false
