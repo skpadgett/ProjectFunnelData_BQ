@@ -1,6 +1,7 @@
 {
   "schedules": [{
     "name": "asbestos_funnel",
+    "disabled": true,
     "options": {
       "includeDependencies": true,
       "fullRefresh": false

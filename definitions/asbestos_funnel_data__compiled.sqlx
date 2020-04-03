@@ -11,7 +11,9 @@ config { type: "view" }
   -- Final data selection
 SELECT DISTINCT
 A.md_id,
-A.redis_id AS lead_id,
+A.redis_id,
+B.lead_id,
+D.account_id,
 A.md_createddatetime::timestamp AS md_createddate,
   B.lead_createddatetime::timestamp as lead_createddate,
   D.account_createddatetime::timestamp as account_createddate,
@@ -23,17 +25,29 @@ A.md_createddatetime::timestamp AS md_createddate,
   J.opportunity_law_firm::varchar as qualified_first_sendover_law_firm,
   M.opportunity_law_firm::varchar as qualified_first_meeting_scheduled_law_firm,
   O.opportunity_law_firm::varchar as signed_opp_law_firm,
-CASE A.utm_source
-WHEN 'AdWords' THEN '1'::varchar
-WHEN 'Bing' THEN '2'::varchar
-ELSE '-1'::varchar end AS account_id,
-A.ads_campaign::varchar AS campaign_id,
-A.ads_adgroup::varchar AS adgroup_id,
-A.ads_keyword::varchar AS keyword_id,
-A.ads_creative::varchar AS creative_id,
+CASE WHEN A.website = 'asbestos.com'
+    AND A.utm_source = 'AdWords' THEN '7850125678' :: varchar
+    WHEN A.website = 'asbestos.com'
+    AND A.utm_source = 'Bing' THEN '404358' :: varchar
+    WHEN A.website = 'pleuralmesothelioma.com'
+    AND A.utm_source = 'AdWords' THEN '6704306436' :: varchar
+    WHEN A.website = 'pleuralmesothelioma.com'
+    AND A.utm_source = 'Bing' THEN '48028399' :: varchar
+    WHEN A.website = 'mesotheliomaprognosis.com'
+    AND A.utm_source = 'AdWords' THEN '4476877055' :: varchar
+    WHEN A.website = 'mesotheliomaprognosis.com'
+    AND A.utm_source = 'Bing' THEN '71063428' :: varchar
+    ELSE '-1' :: varchar
+ end AS ad_account_id,
+A.ads_campaign::varchar AS ad_campaign_id,
+A.ads_adgroup::varchar AS ad_adgroup_id,
+A.ads_keyword::varchar AS ad_keyword_id,
+A.ads_creative::varchar AS ad_creative_id,
 A.utm_source::varchar,
 A.traffic_source__c::varchar as traffic_source,
+A.marketing_channels::varchar as marketing_channels,
 A.website::varchar,
+A.vertical::varchar,
 A.lead_type::varchar,
 A.paid::varchar,
 COALESCE(A.is_md,0)::int2 AS is_md,

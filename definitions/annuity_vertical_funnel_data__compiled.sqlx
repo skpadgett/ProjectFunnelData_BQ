@@ -1,0 +1,124 @@
+config {
+  type: "view"
+}
+
+/*
+
+* Upon running this query, a table schema.table_name will be created in your warehouse, where schema is the Dataform schema defined in your dataform.json file and table_name is the name of this file
+
+* Learn more on https://docs.dataform.co/guides/datasets
+
+*/
+-- Joins Lead & QL data together for all 3 datasets: secondary annuity, mortgage note, and primary annuity
+with final_data AS (
+  SELECT
+    DISTINCT A.md_id, 
+    A.md_created_date,
+    A.redis_id,
+    A.mds as is_md,
+    A.campaign__c as ad_campaign_id,
+    A.adgroup__c as ad_adgroup_id,
+    A.keyword__c as ad_keyword_id,
+    A.creative__c as ad_creative_id,
+    A.source,
+    A.website,
+    A.vertical,
+    A.paid,
+    A.cause,
+    A.lead_type,
+    A.marketing_channels,
+    A.traffic_source,
+    A.lead_id,
+    A.lead_created_date,
+    A.leads as is_lead,
+    B.qualified_leads as is_qualified_lead,
+    B.qualified_date
+  FROM
+    ${ref("annuity_secondary_funnel_data__leads")} as A
+    LEFT JOIN ${ref("annuity_secondary_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
+  UNION ALL
+  SELECT
+    DISTINCT A.md_id,
+    A.md_created_date,
+    A.redis_id,
+    A.mds as is_md,
+    A.campaign__c as ad_campaign_id,
+    A.adgroup__c as ad_adgroup_id,
+    A.keyword__c as ad_keyword_id,
+    A.creative__c as ad_creative_id,
+    A.source,
+    A.website,
+    A.vertical,
+    A.paid,
+    A.cause,
+    A.lead_type,
+    A.marketing_channels,
+    A.traffic_source,
+    A.lead_id,
+    A.lead_created_date,
+    A.leads as is_lead,
+    B.qualified_leads as is_qualified_lead,
+    B.qualified_date
+  FROM
+    ${ref("mortgage_note_funnel_data__leads")} as A
+    LEFT JOIN ${ref("mortgage_note_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
+  UNION ALL
+  SELECT
+    DISTINCT A.md_id,
+    A.md_created_date,
+    A.redis_id,
+    A.mds as is_md,
+    A.campaign__c as ad_campaign_id,
+    A.adgroup__c as ad_adgroup_id,
+    A.keyword__c as ad_keyword_id,
+    A.creative__c as ad_creative_id,
+    A.source,
+    A.website,
+    A.vertical,
+    A.paid,
+    A.cause,
+    A.lead_type,
+    A.marketing_channels,
+    A.traffic_source,
+    A.lead_id,
+    A.lead_created_date,
+    A.leads as is_lead,
+    null :: int as is_qualified_lead,
+    null :: date as qualified_date
+  FROM
+    ${ref("annuity_primary_funnel_data__leads")} as A
+    -- LEFT JOIN apm_qualified_leads as B on A.lead_id = B.lead_id
+)
+-- select and modify final data
+SELECT
+  DISTINCT md_id,
+ redis_id,
+  lead_id,
+  md_created_date:: timestamp as md_createddate,
+  lead_created_date:: timestamp as lead_createddate,
+  qualified_date::timestamp,
+  website :: varchar,
+  vertical :: varchar,
+  paid :: varchar,
+  lead_type :: varchar,
+  marketing_channels :: varchar,
+  traffic_source :: varchar,
+  source :: varchar as utm_source,
+  CASE
+    WHEN website = 'annuity.org'
+    AND source = 'AdWords' THEN '7004720340' :: varchar
+    WHEN website = 'annuity.org'
+    AND source = 'Bing' THEN '43004227' :: varchar
+    WHEN website = 'structuredsettlements.com'
+    AND source = 'AdWords' THEN '6197331359' :: varchar
+    ELSE '-1' :: varchar
+  END as ad_account_id,
+  ad_campaign_id::varchar,
+  ad_adgroup_id::varchar,
+  ad_keyword_id::varchar,
+  ad_creative_id::varchar,
+  COALESCE(is_md,0)::int2 as is_md,
+  coalesce(is_lead,0)::int2 as is_lead,
+  coalesce(is_qualified_lead,0)::int2 as is_qualified_lead
+ 
+            FROM final_data

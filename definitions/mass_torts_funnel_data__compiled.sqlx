@@ -1,0 +1,41 @@
+config {
+  type: "view"
+}
+
+/*
+
+* Upon running this query, a table schema.table_name will be created in your warehouse, where schema is the Dataform schema defined in your dataform.json file and table_name is the name of this file
+
+* Learn more on https://docs.dataform.co/guides/datasets
+
+*/
+-- with final_data as (
+select
+  distinct A.md_id,
+  A.redis_id,
+  A.campaign__c :: varchar as ad_campaign_id,
+  A.adgroup__c :: varchar as ad_adgroup_id,
+  A.keyword__c :: varchar as ad_keyword_id,
+  A.creative__c :: varchar as ad_creative_id,
+  A.source :: varchar as utm_source,
+  A.website :: varchar,
+  A.vertical :: varchar,
+  A.paid :: varchar,
+  A.cause :: varchar,
+  A.lead_type :: varchar,
+  A.marketing_channels :: varchar,
+  A.traffic_source :: varchar,
+  A.lead_id,
+  coalesce(A.mds, 0) :: int2 as is_md,
+  coalesce(A.leads, 0) :: int2 as is_lead,
+  coalesce(B.qualified_leads, 0) :: int2 as is_qualified_lead,
+  coalesce(C.customers, 0) :: int2 as is_customer,
+  coalesce(C.revisions, 0) :: int2 as is_revision,
+  A.md_created_date as md_createddate,
+  A.lead_created_date :: timestamp as lead_createddate,
+  B.qualified_date :: timestamp,
+  C.signing_date :: timestamp as customer_signeddate
+from
+  ${ref("mass_torts_funnel_data__leads")} as A
+  left join ${ref("mass_torts_funnel_data__qualified_leads")} as B on A.md_id = B.md_id
+  left join ${ref("mass_torts_funnel_data__customers")} as C on A.md_id = C.md_id

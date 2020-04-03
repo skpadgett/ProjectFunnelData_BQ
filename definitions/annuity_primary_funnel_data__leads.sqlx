@@ -1,0 +1,58 @@
+config {
+  type: "view"
+}
+
+/*
+
+* Upon running this query, a table schema.table_name will be created in your warehouse, where schema is the Dataform schema defined in your dataform.json file and table_name is the name of this file
+
+* Learn more on https://docs.dataform.co/guides/datasets
+
+*/
+--gets base information for annuity primary leads FROM MD & Leads tables
+SELECT
+  DISTINCT marketing_data__c.id AS md_id,
+  marketing_data__c.redis_id__c as redis_id,
+  marketing_data__c.createddate AS md_created_date,
+  CASE
+    WHEN marketing_data__c.id is not null THEN 1
+    ELSE null
+  END AS mds,
+  marketing_data__c.adwords_campaign__c AS campaign__c,
+  marketing_data__c.adwords_adgroup__c as adgroup__c,
+  marketing_data__c.keyword_id__c as keyword__c,
+  marketing_data__c.adwords_creative__c as creative__c,
+  CASE
+    marketing_data__c.utm_source__c
+    WHEN 'google' THEN 'AdWords'
+    WHEN 'adwords' THEN 'AdWords'
+    WHEN 'bing' THEN 'Bing'
+    WHEN 'facebook' THEN 'Facebook'
+    ELSE marketing_data__c.utm_source__c
+  end AS source,
+  marketing_data__c.website__c as website,
+  marketing_data__c.vertical__c as vertical,
+  CASE
+    marketing_data__c.paid__c
+    WHEN true THEN 'Paid'
+    ELSE 'Organic'
+  END as paid,
+  marketing_data__c.cause__c as cause,
+  marketing_data__c.lead_type__c as lead_type,
+  marketing_data__c.marketing_channels__c as marketing_channels,
+  marketing_data__c.traffic_source__c as traffic_source,
+  lead.id as lead_id,
+  lead.createddate as lead_created_date,
+  CASE
+    WHEN Lead.marketing_data_attribution__c IS not null THEN 1
+    ELSE null
+  END AS leads
+FROM
+  lt_pa_salesforce.marketing_data__c
+  INNER JOIN lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c
+WHERE
+  marketing_data__c.test_or_spam__c IS false
+  AND lead.test_or_spam__c IS FALSE
+  AND marketing_data__c.vertical__c in ('APM')
+  AND marketing_data__c.isdeleted is false
+  AND lead.isdeleted is false

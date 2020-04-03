@@ -1,0 +1,65 @@
+config {
+  type: "view"
+}
+
+/*
+
+* Upon running this query, a table schema.table_name will be created in your warehouse, where schema is the Dataform schema defined in your dataform.json file and table_name is the name of this file
+
+* Learn more on https://docs.dataform.co/guides/datasets
+
+*/
+-- there are two queries below. Both get information for qualified leads, but are done so based on whether the QL was paid or organic. The qualified dates are determined differently based on channel. The two queries are unioned in order to create a full dataset
+-- gets qualified leads information for mortgage note. Createddate is used for paid leads' qualified date.
+with mnote_qualified_leads_paid AS (
+  SELECT
+    DISTINCT lead.id as lead_id,
+    lead.createddate as qualified_date,
+    CASE
+      WHEN Lead.marketing_data_attribution__c IS not null THEN 1
+      ELSE null
+    END AS qualified_leads
+  FROM
+    lt_pa_salesforce.lead
+    INNER JOIN ${ref("mortgage_note_funnel_data__leads")} as mnote_leads ON lead.id = mnote_leads.lead_id
+  WHERE
+    lead.md_vertical__c IN ('MNote', 'Annuity')
+    AND lead.qualified__c is true
+    AND lead.cbc_annuity_type__c in ('Deed Street Lead RT', 'Mortgage Note')
+    AND mnote_leads.marketing_channels = 'Paid'
+    AND lead.isdeleted is false
+),
+-- gets qualified leads information for mortgage note. CBC converted date is used for organic leads qualified date.
+mnote_qualified_leads_organic AS (
+SELECT
+  DISTINCT lead.id as lead_id,
+  lead.cbc_converted_date__c as qualified_date,
+  CASE
+    WHEN Lead.marketing_data_attribution__c IS not null THEN 1
+    ELSE null
+  END AS qualified_leads
+FROM
+  lt_pa_salesforce.lead
+  INNER JOIN ${ref("mortgage_note_funnel_data__leads")} as mnote_leads ON lead.id = mnote_leads.lead_id
+WHERE
+  lead.md_vertical__c IN ('MNote', 'Annuity')
+  AND lead.qualified__c is true
+  AND lead.cbc_annuity_type__c in ('Deed Street Lead RT', 'Mortgage Note')
+  and mnote_leads.marketing_channels not in ('Paid')
+  AND lead.isdeleted is false
+  )
+  -- Joins organic & paid mortgage note QLs into one dataset for use in final data
+  SELECT
+  DISTINCT lead_id,
+  qualified_leads,
+  qualified_date
+  FROM
+  mnote_qualified_leads_organic
+  UNION ALL
+  SELECT
+  DISTINCT lead_id,
+  qualified_leads,
+  qualified_date
+  FROM
+  mnote_qualified_leads_paid
+  
