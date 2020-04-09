@@ -29,7 +29,8 @@ is_viable,
 is_qualified_account,
 is_qualified_first_sendover as is_account_sendover,
 is_qualified_first_meeting_scheduled as is_account_meeting,
-signing_value as is_customer
+signing_value as is_customer,
+null::int as is_torts_mesh_revision
 
 from ${ref("asbestos_funnel_data__compiled")}
 
@@ -67,10 +68,48 @@ null::int as is_viable,
 null::int as is_qualified_account,
 null::int as is_account_sendover,
 null::int as is_account_meeting,
-null::int as is_customer
+null::int as is_customer,
+null::int as is_torts_mesh_revision
 
 from ${ref("annuity_vertical_funnel_data__compiled")}
 
+union all
 
+select distinct 
+
+md_id,
+redis_id as mr_lead_id,
+lead_id,
+null::varchar as account_id,
+md_createddate as md_created_date,
+lead_createddate as lead_created_date,
+null::date as account_created_date,
+qualified_date,
+customer_signeddate as signing_date,
+website,
+vertical,
+paid as channel,
+cause,
+lead_type,
+utm_source as source,
+ad_account_id,
+ad_campaign_id,
+ad_adgroup_id,
+ad_keyword_id,
+ad_creative_id,
+is_md,
+is_lead,
+null::int as is_meso_form_lead,
+null::int as is_account,
+null::int as is_meso_account,
+is_qualified_lead,
+null::int as is_viable,
+null::int as is_qualified_account,
+null::int as is_account_sendover,
+null::int as is_account_meeting,
+null::int as is_customer,
+is_revision as is_torts_mesh_revision
+
+from ${ref("mass_torts_funnel_data__compiled")}
 
 

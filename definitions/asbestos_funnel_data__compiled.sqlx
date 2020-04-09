@@ -29,14 +29,20 @@ CASE WHEN A.website = 'asbestos.com'
     AND A.utm_source = 'AdWords' THEN '7850125678' :: varchar
     WHEN A.website = 'asbestos.com'
     AND A.utm_source = 'Bing' THEN '404358' :: varchar
+    WHEN A.website = 'asbestos.com'
+    AND A.utm_source = 'Facebook' THEN '110731655701215' :: varchar
     WHEN A.website = 'pleuralmesothelioma.com'
     AND A.utm_source = 'AdWords' THEN '6704306436' :: varchar
     WHEN A.website = 'pleuralmesothelioma.com'
     AND A.utm_source = 'Bing' THEN '48028399' :: varchar
+    WHEN A.website = 'pleuralmesothelioma.com'
+    AND A.utm_source = 'Facebook' THEN '1376949775890008' :: varchar
     WHEN A.website = 'mesotheliomaprognosis.com'
     AND A.utm_source = 'AdWords' THEN '4476877055' :: varchar
     WHEN A.website = 'mesotheliomaprognosis.com'
     AND A.utm_source = 'Bing' THEN '71063428' :: varchar
+    WHEN A.website = 'mesotheliomaprognosis.com'
+    AND A.utm_source = 'Facebook' THEN '124326801252369' :: varchar
     ELSE '-1' :: varchar
  end AS ad_account_id,
 A.ads_campaign::varchar AS ad_campaign_id,

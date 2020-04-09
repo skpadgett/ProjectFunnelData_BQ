@@ -109,6 +109,8 @@ SELECT
     AND source = 'AdWords' THEN '7004720340' :: varchar
     WHEN website = 'annuity.org'
     AND source = 'Bing' THEN '43004227' :: varchar
+    WHEN website = 'annuity.org'
+    AND source = 'Facebook' THEN '1389534567937754' :: varchar
     WHEN website = 'structuredsettlements.com'
     AND source = 'AdWords' THEN '6197331359' :: varchar
     ELSE '-1' :: varchar

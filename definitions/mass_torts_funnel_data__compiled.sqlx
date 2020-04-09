@@ -17,6 +17,11 @@ select
   A.adgroup__c :: varchar as ad_adgroup_id,
   A.keyword__c :: varchar as ad_keyword_id,
   A.creative__c :: varchar as ad_creative_id,
+  CASE
+    WHEN website = 'drugwatch.com'
+    AND source = 'Facebook' THEN '1402060363429896' :: varchar
+    ELSE '-1' :: varchar
+  END as ad_account_id,
   A.source :: varchar as utm_source,
   A.website :: varchar,
   A.vertical :: varchar,
