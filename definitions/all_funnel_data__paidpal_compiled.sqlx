@@ -1,3 +1,5 @@
+config { type: "view" }
+
 select distinct
 md_id,
 redis_id as mr_lead_id,
