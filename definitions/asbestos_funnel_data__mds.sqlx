@@ -35,7 +35,7 @@ config { type: "view" }
  case when "Marketing Data C".paid__c is true then 'Paid' else 'Organic' end as paid,
  "Marketing Data C".vertical__c as vertical,
  "Marketing Data C".invoca_promo_description__c as invoca_promo_description,
- "Marketing Data C".campaign_id__c as invoca_campaign,
+ "Marketing Data C".campaign_name__c as invoca_campaign,
   "Marketing Data C".utm_content__c as utm_content
   -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
   
