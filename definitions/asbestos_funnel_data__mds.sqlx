@@ -36,7 +36,7 @@ config { type: "view" }
  "Marketing Data C".vertical__c as vertical,
  "Marketing Data C".invoca_promo_description__c as invoca_promo_description,
  "Marketing Data C".campaign_name__c as invoca_campaign,
-  "Marketing Data C".utm_content__c as utm_content
+  case when "Marketing Data C".campaign_name__c = 'Print' then to_date("Marketing Data C".utm_content__c, 'MM-YYYY') else null end as traditional_publication_date
   -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
   
     FROM
@@ -45,5 +45,5 @@ config { type: "view" }
     "Marketing Data C".vertical__c = 'Asbestos'
         AND test_or_spam__c IS false   
     and isdeleted is false
- 
+
  
