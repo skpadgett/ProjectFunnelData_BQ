@@ -24,3 +24,4 @@ config { type: "view" }
         AND account.test__c IS false
   and lead.isdeleted is false
  and account.isdeleted is false  
+    AND account.recordtypeid IN ('01215000001YnbxAAC','0121C000001UjlhQAC')

@@ -16,19 +16,5 @@ end`;
 }
 module.exports = { lawfirm };
 
-/*
- * You can call the function from any of your SQL scripts. For example, if this file is named includes/country_mapping.js, you can use the function as below:
-    
-    SELECT ${country_mapping.countryGroup("country_code")} AS country_group 
-    ...
 
-  * The query will be compiled into the following SQL before it is run:
-    SELECT
-    CASE
-        WHEN country_code IN ("US", "CA") THEN "NA"
-        WHEN country_code IN ("GB", "FR", "DE", "IT", "PL") THEN "EU"
-        WHEN country_code IN ("AU") THEN country_code
-        ELSE "Other countries"
-    END AS country_group
-*/
   

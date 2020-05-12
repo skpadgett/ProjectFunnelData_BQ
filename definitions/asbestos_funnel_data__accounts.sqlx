@@ -14,9 +14,14 @@ config { type: "view" }
         lead.id as lead_id,
         lead.createddate as lead_createddatetime,
         account.id as account_id,
-        account.effect__c,
+        account.effect__c as account_effect,
         account.createddate as account_createddatetime,
-        CASE when account.id is not null then 1 else null end AS is_account
+        CASE when account.id is not null then 1 else null end AS is_account, 
+        ${lead_account_ownerids.ownerid("account.ownerid")} as account_owner,
+        CASE when  (account.status__c in ('Prospecting', 'Inactive') or account.sub_status__c in ('Screening')) then 1 else null end as is_currently_workable_account,
+        account.status__c as account_status,
+        account.sub_status__c as account_sub_status
+
 
     FROM
         lt_pa_salesforce.account AS Account 
@@ -26,4 +31,5 @@ config { type: "view" }
          account.test__c IS false 
   and lead.isdeleted is false
   and account.isdeleted is false
+   AND account.recordtypeid IN ('01215000001YnbxAAC','0121C000001UjlhQAC')
 

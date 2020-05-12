@@ -1,0 +1,32 @@
+/*
+
+* Upon running this query, a table schema.table_name will be created in your warehouse, where schema is the Dataform schema defined in your dataform.json file and table_name is the name of this file
+
+* Learn more on https://docs.dataform.co/guides/datasets
+
+*/
+-- these are pa-specific Lead metrics
+config { type: "view" }
+
+
+    select distinct 
+    mds.md_id,
+    lead.id as lead_id,
+    lead.lead_status__c as lead_status,
+    lead.sub_status__c as lead_sub_status,
+    lead.effect__c as lead_effect,
+    lead.createddate as lead_createddatetime,
+    CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_raw_lead,
+    CASE when lead.lead_status__c not in ('New','Unreached', 'Unable to Reach', 'Test/Spam') then 1 else null end as is_reached_lead,
+    CASE when lead.lead_status__c in ('New','Unreached', 'Unable to Reach', 'Test/Spam') then 1 else null end as is_unreached_lead,
+     ${lead_account_ownerids.ownerid("lead.ownerid")} as lead_owner
+    
+
+FROM
+        lt_pa_salesforce.lead AS Lead 
+        INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds on Lead.marketing_data_attribution__c = mds.md_id
+    WHERE
+  lead.test_or_spam__c IS FALSE        
+  and lead.isdeleted is false
+
+  

@@ -5,7 +5,7 @@
 * Learn more on https://docs.dataform.co/guides/datasets/
 
 */
-
+-- these are marketing-specific Lead metrics
 config { type: "view" }
 
 
