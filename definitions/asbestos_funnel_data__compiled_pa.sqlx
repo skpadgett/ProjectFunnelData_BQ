@@ -3,7 +3,6 @@ config { type: "view" }
   -- Final data selection
 SELECT DISTINCT
 A.md_id,
-A.redis_id,
 B.lead_id,
 D.account_id,
 A.md_createddatetime::timestamp AS md_createddate,
@@ -15,7 +14,7 @@ A.md_createddatetime::timestamp AS md_createddate,
   O.opportunity_signeddatetime::timestamp as customer_signeddate,
  /* J.opportunity_law_firm::varchar as qualified_first_sendover_law_firm,
   M.opportunity_law_firm::varchar as qualified_first_meeting_scheduled_law_firm,*/
-  O.opportunity_law_firm::varchar as signed_opp_law_firm,
+O.opportunity_law_firm::varchar as signed_opp_law_firm,
 B.lead_owner::varchar,
 B.lead_status::varchar,
 B.lead_sub_status::varchar,
@@ -28,7 +27,7 @@ COALESCE(A.is_md,0)::int2 AS is_md,
 COALESCE(B.is_raw_lead,0)::int2 AS is_raw_lead,
 COALESCE(B.is_reached_lead,0)::int2 AS is_reached_lead,
 COALESCE(B.is_unreached_lead,0)::int2 AS is_unreached_lead,
-COALESCE(C.is_meso_form_lead,0)::int2 as is_meso_form_lead,
+COALESCE(B.is_pa_meso_form_lead,0)::int2 as is_pa_meso_form_lead,
 COALESCE(D.is_account,0)::int2 as is_account,
 COALESCE(D.is_currently_workable_account,0)::int2 as is_currently_workable_account,
 COALESCE(E.is_meso_account,0)::int2 as is_meso_account,
@@ -44,9 +43,8 @@ COALESCE(N.is_qualified_all_meeting_scheduled,0)::int2 as is_qualified_all_meeti
 COALESCE(O.is_customer,0)::int2 as is_customer,
 COALESCE(O.signing_value,0)::decimal(4,2) AS signing_value
 
-FROM ${ref("asbestos_funnel_data__mds")} AS A
+FROM ${ref("asbestos_funnel_data__raw_mds")} AS A
 LEFT JOIN ${ref("asbestos_funnel_data__raw_leads")} as B on A.md_id = B.md_id
-LEFT JOIN ${ref("asbestos_funnel_data__meso_form_leads")} AS C ON A.md_id = C.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__accounts")} AS D ON A.md_id = D.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__meso_accounts")} AS E ON A.md_id = E.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__qualified_leads")} AS F ON A.md_id = F.md_id

@@ -5,7 +5,7 @@
 * Learn more on https://docs.dataform.co/guides/datasets/
 
 */
-
+-- for marketing metrics
 config { type: "view" }
 
 

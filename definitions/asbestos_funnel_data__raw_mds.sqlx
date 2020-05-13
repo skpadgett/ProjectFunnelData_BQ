@@ -1,0 +1,46 @@
+/*
+
+* Upon running this query, a table schema.table_name will be created in your warehouse, where schema is the Dataform schema defined in your dataform.json file and table_name is the name of this file
+
+* Learn more on https://docs.dataform.co/guides/datasets
+
+*/
+-- for determining PA-specific lead information
+config { type: "view" }
+
+     SELECT DISTINCT 
+        "Marketing Data C".id AS md_id,
+        redis_id__c as redis_id,
+        createddate AS md_createddatetime,
+        CASE when id is not null then 1 else null end AS is_md,
+        "Marketing Data C".adwords_campaign__c AS ads_campaign,
+        "Marketing Data C".adwords_adgroup__c as ads_adgroup,
+        "Marketing Data C".keyword_id__c as ads_keyword,
+        "Marketing Data C".adwords_creative__c as ads_creative,
+  "Marketing Data C".website__c as website,
+        CASE "Marketing Data C".utm_source__c
+            WHEN 'google' THEN 'Adwords'
+            WHEN 'adwords' THEN 'Adwords'
+            WHEN 'bing' THEN 'Bing'
+            WHEN 'facebook' THEN 'Facebook'
+  			WHEN 'yahoo' THEN 'Gemini'
+ 			WHEN 'quora' THEN 'Quora'
+            WHEN 'steelhouse' THEN 'Steelhouse'
+        ELSE "Marketing Data C".utm_source__c end AS utm_source,
+        "Marketing Data C".marketing_channels__c as marketing_channels,
+ "Marketing Data C".lead_type__c as lead_type,
+ "Marketing Data C".effect__c as md_effect,
+ "Marketing Data C".traffic_source__c as traffic_source,
+ case when "Marketing Data C".paid__c is true then 'Paid' else 'Organic' end as paid,
+ "Marketing Data C".vertical__c as vertical,
+ "Marketing Data C".invoca_promo_description__c as invoca_promo_description,
+ "Marketing Data C".campaign_name__c as invoca_campaign,
+  case when "Marketing Data C".campaign_name__c = 'Print' then to_date("Marketing Data C".utm_content__c, 'MM-YYYY') else null end as traditional_publication_date
+  -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
+  
+    FROM
+        lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
+    WHERE
+    "Marketing Data C".vertical__c = 'Asbestos'
+   
+    and isdeleted is false
