@@ -32,10 +32,12 @@ with final_data AS (
     A.lead_created_date,
     A.leads as is_lead,
     B.qualified_leads as is_qualified_lead,
-    B.qualified_date
+    B.qualified_date,
+    C.preqls as is_preql
   FROM
     ${ref("annuity_secondary_funnel_data__leads")} as A
     LEFT JOIN ${ref("annuity_secondary_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
+    LEFT JOIN ${ref("annuity_secondary_funnel_data__preql")} as C on A.lead_id = C.lead_id
   UNION ALL
   SELECT
     DISTINCT A.md_id,
@@ -58,7 +60,8 @@ with final_data AS (
     A.lead_created_date,
     A.leads as is_lead,
     B.qualified_leads as is_qualified_lead,
-    B.qualified_date
+    B.qualified_date,
+    null :: int as is_preql
   FROM
     ${ref("mortgage_note_funnel_data__leads")} as A
     LEFT JOIN ${ref("mortgage_note_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
@@ -84,7 +87,8 @@ with final_data AS (
     A.lead_created_date,
     A.leads as is_lead,
     null :: int as is_qualified_lead,
-    null :: date as qualified_date
+    null :: date as qualified_date,
+    null :: int as is_preql
   FROM
     ${ref("annuity_primary_funnel_data__leads")} as A
     -- LEFT JOIN apm_qualified_leads as B on A.lead_id = B.lead_id
@@ -121,6 +125,8 @@ SELECT
   ad_creative_id::varchar,
   COALESCE(is_md,0)::int2 as is_md,
   coalesce(is_lead,0)::int2 as is_lead,
-  coalesce(is_qualified_lead,0)::int2 as is_qualified_lead
+  coalesce(is_qualified_lead,0)::int2 as is_qualified_lead,
+qualified_date::timestamp,
+coalesce(is_preql,0)::int2 as is_preql
  
             FROM final_data

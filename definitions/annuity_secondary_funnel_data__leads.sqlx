@@ -46,7 +46,10 @@ SELECT
   CASE
     WHEN Lead.marketing_data_attribution__c IS not null THEN 1
     ELSE null
-  END AS leads
+  END AS leads,
+marketing_data__c.type_of_payment__c as type_of_payment,
+marketing_data__c.key_presses__c as key_presses,
+marketing_data__c.woopra_cookie_id__c as microanalytics_id
 FROM
   lt_pa_salesforce.marketing_data__c
   INNER JOIN lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c

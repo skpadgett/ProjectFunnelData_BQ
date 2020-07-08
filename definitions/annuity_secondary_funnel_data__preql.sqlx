@@ -1,0 +1,34 @@
+config {
+  type: "view"
+}
+
+select distinct 
+annuity_leads.md_id,
+annuity_leads.lead_id,
+annuity_leads.vertical,
+case when annuity_leads.lead_id is not null then 1 else null end as preqls,
+annuity_leads.website,
+marketing_data__c.type_of_payment__c as type_of_payment,
+annuity_leads.lead_type,
+marketing_data__c.key_presses__c as key_presses,
+annuity_leads.microanalytics_id
+
+from 
+${ref("annuity_secondary_funnel_data__leads")} as annuity_leads
+inner join lt_pa_salesforce.marketing_data__c on annuity_leads.md_id = marketing_data__c.id
+where
+(((marketing_data__c.lead_type__c = 'Form'
+         AND marketing_data__c.type_of_payment__c IN ('Structured Settlement',
+                                                      'Single Premium Annuity',
+                                                      'Lottery Payments'))
+        OR (marketing_data__c.lead_type__c = 'Form'
+            AND marketing_data__c.website__c = 'structuredsettlements.com'))
+       OR ((marketing_data__c.lead_type__c = 'Phone'
+            AND marketing_data__c.key_presses__c = '[1]')
+           OR (marketing_data__c.lead_type__c = 'Phone'
+               AND marketing_data__c.website__c = 'structuredsettlements.com')))
+  AND ((annuity_leads.microanalytics_id IS NOT NULL)
+       OR (marketing_data__c.key_presses__c = '[1]'))
+       -- PER STEVE LACLAIR, JUN 17 2020 IS WHEN IVR KEYPRESS WENT INTO EFFECT. WE CANNOT ACCURATELY MEASURE THIS KPI IN TERMS OF PHONE LEADS/IVR KEYPRESS PRIOR TO THIS DATE
+       AND annuity_leads.lead_created_date >= '2020-06-17'
+       
