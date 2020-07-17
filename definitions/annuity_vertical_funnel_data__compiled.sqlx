@@ -126,7 +126,6 @@ SELECT
   COALESCE(is_md,0)::int2 as is_md,
   coalesce(is_lead,0)::int2 as is_lead,
   coalesce(is_qualified_lead,0)::int2 as is_qualified_lead,
-qualified_date::timestamp,
 coalesce(is_preql,0)::int2 as is_preql
  
             FROM final_data
