@@ -109,7 +109,7 @@ null::int as is_viable,
 null::int as is_qualified_account,
 null::int as is_account_sendover,
 null::int as is_account_meeting,
-null::int as is_customer,
+is_customer,
 is_revision as is_torts_mesh_revision
 
 from ${ref("mass_torts_funnel_data__compiled")}
