@@ -9,13 +9,14 @@
 config { type: "view" }
 
   -- Final data selection
-SELECT DISTINCT
+
+  SELECT DISTINCT
 A.md_id,
 A.redis_id,
-B.lead_id,
+BB.lead_id,
 D.account_id,
 A.md_createddatetime::timestamp AS md_createddate,
-  B.lead_createddatetime::timestamp as lead_createddate,
+  BB.lead_createddatetime::timestamp as lead_createddate,
   D.account_createddatetime::timestamp as account_createddate,
   P.qualified_first_sendoverdatetime::timestamp as qualified_first_sendoverdatetime,
   R.all_sendoverdatetime::timestamp as signed_opp_sendoverdatetime,
@@ -79,6 +80,7 @@ COALESCE(O.signing_value,0)::decimal(4,2) AS signing_value
 
 FROM ${ref("asbestos_funnel_data__mds")} AS A
 LEFT JOIN ${ref("asbestos_funnel_data__leads")} AS B ON A.md_id = B.md_id
+LEFT JOIN ${ref("asbestos_funnel_data__raw_leads")} AS BB on A.md_id = BB.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__meso_form_leads")} AS C ON A.md_id = C.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__accounts")} AS D ON A.md_id = D.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__meso_accounts")} AS E ON A.md_id = E.md_id
@@ -96,5 +98,4 @@ LEFT JOIN ${ref('asbestos_funnel_data__qualified_first_sendovers')} as P on I.ac
 LEFT JOIN ${ref('asbestos_funnel_data__qualified_first_meetings_scheduled')} as Q on L.account_id = Q.account_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_sendovers')} as R on O.opportunity_id = R.opportunity_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_meetings_scheduled')} as S on O.opportunity_id = S.opportunity_id
-
 
