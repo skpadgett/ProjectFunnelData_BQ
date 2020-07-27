@@ -1,0 +1,13 @@
+config {
+  type: "view"
+}
+-- Do not use results of this view for aggregation. Results are not one-to-one
+select 
+account.account_id,
+account.lead_id,
+account.md_id,
+"user"."name" as account_assist_pa,
+accountteammember.teammemberrole as account_assist_pa_role
+from ${ref("asbestos_funnel_data__accounts")} as account
+left join lt_pa_salesforce.accountteammember on account.account_id = accountteammember.accountid
+left join lt_pa_salesforce."user" on accountteammember.userid = "user".id
