@@ -18,6 +18,7 @@ D.account_id,
 A.md_createddatetime::timestamp AS md_createddate,
   BB.lead_createddatetime::timestamp as lead_createddate,
   D.account_createddatetime::timestamp as account_createddate,
+  G.first_viable_datetime::timestamp as first_viabledate,
   P.qualified_first_sendoverdatetime::timestamp as qualified_first_sendoverdatetime,
   R.all_sendoverdatetime::timestamp as signed_opp_sendoverdatetime,
   Q.qualified_first_meeting_scheduleddatetime::timestamp as qualified_first_meeting_scheduleddatetime,
@@ -76,7 +77,9 @@ COALESCE(L.is_all_meeting_scheduled,0)::int2 as is_all_meeting_scheduled,
 COALESCE(M.is_qualified_first_meeting_scheduled,0)::int2 as is_qualified_first_meeting_scheduled,
 COALESCE(N.is_qualified_all_meeting_scheduled,0)::int2 as is_qualified_all_meeting_scheduled,
 COALESCE(O.is_customer,0)::int2 as is_customer,
-COALESCE(O.signing_value,0)::decimal(4,2) AS signing_value
+COALESCE(O.is_all_customer,0)::int2 as is_all_customer,
+COALESCE(O.signing_value,0)::decimal(4,2) AS signing_value,
+COALESCE(O.all_signing_value,0)::decimal(4,2) AS all_signing_value
 
 FROM ${ref("asbestos_funnel_data__mds")} AS A
 LEFT JOIN ${ref("asbestos_funnel_data__leads")} AS B ON A.md_id = B.md_id

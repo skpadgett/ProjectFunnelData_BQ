@@ -14,7 +14,8 @@ config { type: "view" }
         lead.id as lead_id,
         account.id as account_id,
         account.createddate as account_createddatetime,
-        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_viable
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_viable,
+        account.first_viable_date__c as first_viable_datetime
     FROM
         lt_pa_salesforce.account AS Account
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id

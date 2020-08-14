@@ -18,8 +18,8 @@ with customers_setup as (
         account.effect__c as account_effect,
         opportunity.name as opportunity_name,
         ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
-        COALESCE(Opportunity.signing_value_override__c,Opportunity.signing_value__c) AS signing_value,
-        case when Opportunity.signing_value__c is not null then 1 else 0 end as is_customer,
+    COALESCE(Opportunity.signing_value_override__c,Opportunity.signing_value__c) as signing_value, 
+        case when opportunity.signing_value__c is not null then 1 else 0 end as is_customer,
         Opportunity.stage_signed_date_time__c as opportunity_signeddatetime
     FROM 
         lt_pa_salesforce.account AS Account
@@ -28,8 +28,9 @@ with customers_setup as (
         INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
     WHERE 
     --account.effect__c changed from ILIKE '%Mesothelioma%' to = 'Mesothelioma' in 12/2019 
-        Account.effect__c = 'Mesothelioma'
-        AND Opportunity.stage_signed_date_time__c is not null
+        Account.effect__c in ('Mesothelioma','Lung Cancer')
+         AND Opportunity.stage_signed_date_time__c is not null
+        
 
   and lead.isdeleted is false
   and account.isdeleted is false
@@ -41,8 +42,10 @@ with customers_setup as (
         account_id,
         opportunity_id,
         account_effect,
-        signing_value,
-        is_customer,
+        signing_value as all_signing_value,
+        case when signing_value in (0.25, 1) and account_effect = 'Mesothelioma' then signing_value else 0 end as signing_value,
+        is_customer as is_all_customer,
+     case when signing_value in (0.25, 1) and account_effect = 'Mesothelioma' then 1 else 0 end as is_customer,
   		opportunity_signeddatetime,
         opportunity_name,
         opportunity_law_firm
@@ -50,5 +53,4 @@ with customers_setup as (
     FROM
         customers_setup
     WHERE
-        signing_value in (0.25, 1)
-
+        signing_value > 0 
