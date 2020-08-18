@@ -9,7 +9,7 @@
 config { type: "view" }
 
 
-     SELECT DISTINCT 
+     with base as (SELECT DISTINCT 
         "Marketing Data C".id AS md_id,
         redis_id__c as redis_id,
         createddate AS md_createddatetime,
@@ -18,7 +18,7 @@ config { type: "view" }
         "Marketing Data C".adwords_adgroup__c as ads_adgroup,
         "Marketing Data C".keyword_id__c as ads_keyword,
         "Marketing Data C".adwords_creative__c as ads_creative,
-  "Marketing Data C".website__c as website,
+  lower("Marketing Data C".website__c) as website,
         CASE "Marketing Data C".utm_source__c
             WHEN 'google' THEN 'Adwords'
             WHEN 'adwords' THEN 'Adwords'
@@ -39,7 +39,7 @@ config { type: "view" }
   case when "Marketing Data C".campaign_name__c = 'Print' then to_date("Marketing Data C".utm_content__c, 'MM-YYYY') else null end as traditional_publication_date,
   -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
   "Marketing Data C".assist_type__c as assist_type,
-  "Marketing Data C".micro_device__c as device
+  case when lower("Marketing Data C".micro_device__c) in ('android', 'iphone') then 'mobile' when lower("Marketing Data C".micro_device__c) in ('ipad') then 'tablet' when lower("Marketing Data C".micro_device__c) is null then null else lower("Marketing Data C".micro_device__c) end as device
 
     FROM
         lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
@@ -48,4 +48,7 @@ config { type: "view" }
         AND test_or_spam__c IS false   
     and isdeleted is false
 
- 
+     )
+     select distinct 
+    website
+     from base

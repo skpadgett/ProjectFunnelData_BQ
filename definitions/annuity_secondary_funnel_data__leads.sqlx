@@ -30,7 +30,7 @@ SELECT
     WHEN 'facebook' THEN 'Facebook'
     ELSE marketing_data__c.utm_source__c
   end AS source,
-  marketing_data__c.website__c as website,
+  lower(marketing_data__c.website__c) as website,
   marketing_data__c.vertical__c as vertical,
   CASE
     marketing_data__c.paid__c
@@ -49,7 +49,8 @@ SELECT
   END AS leads,
 marketing_data__c.type_of_payment__c as type_of_payment,
 marketing_data__c.key_presses__c as key_presses,
-marketing_data__c.woopra_cookie_id__c as microanalytics_id
+marketing_data__c.woopra_cookie_id__c as microanalytics_id,
+case when lower(marketing_data__c.micro_device__c) in ('android', 'iphone') then 'mobile' when lower(marketing_data__c.micro_device__c) in ('ipad') then 'tablet' when lower(marketing_data__c.micro_device__c) is null then null else lower(marketing_data__c.micro_device__c) end as device
 FROM
   lt_pa_salesforce.marketing_data__c
   INNER JOIN lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c

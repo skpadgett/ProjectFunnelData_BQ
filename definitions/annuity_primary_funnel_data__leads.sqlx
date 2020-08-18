@@ -30,7 +30,7 @@ SELECT
     WHEN 'facebook' THEN 'Facebook'
     ELSE marketing_data__c.utm_source__c
   end AS source,
-  marketing_data__c.website__c as website,
+  lower(marketing_data__c.website__c) as website,
   marketing_data__c.vertical__c as vertical,
   CASE
     marketing_data__c.paid__c
@@ -46,7 +46,8 @@ SELECT
   CASE
     WHEN Lead.marketing_data_attribution__c IS not null THEN 1
     ELSE null
-  END AS leads
+  END AS leads,
+  case when lower(marketing_data__c.micro_device__c) in ('android', 'iphone') then 'mobile' when lower(marketing_data__c.micro_device__c) in ('ipad') then 'tablet' when lower(marketing_data__c.micro_device__c) is null then null else lower(marketing_data__c.micro_device__c) end as device
 FROM
   lt_pa_salesforce.marketing_data__c
   INNER JOIN lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c
