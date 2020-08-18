@@ -9,7 +9,7 @@
 config { type: "view" }
 
 
-     with base as (SELECT DISTINCT 
+    SELECT DISTINCT 
         "Marketing Data C".id AS md_id,
         redis_id__c as redis_id,
         createddate AS md_createddatetime,
@@ -48,7 +48,4 @@ config { type: "view" }
         AND test_or_spam__c IS false   
     and isdeleted is false
 
-     )
-     select distinct 
-    website
-     from base
+    
