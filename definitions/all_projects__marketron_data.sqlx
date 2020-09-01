@@ -1,0 +1,71 @@
+config {
+  type: "view"
+}
+-- shows every MD that has either a first page, assist page, or conversion page associated with their record along with the corresponding marketron data for those pages. If marketron data is not available for the pages in the record their fields are empty
+
+with pages as (
+select distinct
+pages.tier,
+pages.content_type,
+pages.page_category,
+pages.keywords,
+pages.search_intent,
+pages.slug,
+replace(pages.url,'https://www.','') as url_trimmed,
+pages.url
+from 
+lt__marketron.pages
+)
+
+
+select distinct 
+marketing_data__c.id as md_id,
+rtrim(marketing_data__c.micro_first_page__c,'?') as first_page,
+rtrim(marketing_data__c.micro_assist_page__c,'?') as assist_page,
+rtrim(marketing_data__c.micro_conv_page__c,'?') as conv_page,
+marketing_data__c.vertical__c as vertical, 
+lower(marketing_data__c.website__c) as website,
+first_page.tier as first_page_tier,
+first_page.content_type as first_page_content_type,
+first_page.page_category as first_page_category,
+first_page.keywords as first_page_keywords,
+first_page.search_intent as first_page_search_intent,
+first_page.slug as first_page_slug,
+first_page.url_trimmed as first_page_url_trimmed,
+first_page.url as first_page_url,
+assist_page.tier as assist_page_tier,
+assist_page.content_type as assist_page_content_type,
+assist_page.page_category as assist_page_category,
+assist_page.keywords as assist_page_keywords,
+assist_page.search_intent as assist_page_search_intent,
+assist_page.slug as assist_page_slug,
+assist_page.url_trimmed as assist_page_url_trimmed,
+assist_page.url as assist_page_url,
+conv_page.tier as conv_page_tier,
+conv_page.content_type as conv_page_content_type,
+conv_page.page_category as conv_page_category,
+conv_page.keywords as conv_page_keywords,
+conv_page.search_intent as conv_page_search_intent,
+conv_page.slug as conv_page_slug,
+conv_page.url_trimmed as conv_page_url_trimmed,
+conv_page.url as conv_page_url
+
+
+
+
+
+from lt_pa_salesforce.marketing_data__c
+full outer join pages as first_page on lower(marketing_data__c.website__c) || rtrim(marketing_data__c.micro_first_page__c,'?') = first_page.url_trimmed
+full outer join pages as conv_page on lower(marketing_data__c.website__c) || rtrim(marketing_data__c.micro_conv_page__c,'?') = conv_page.url_trimmed
+full outer join pages as assist_page on lower(marketing_data__c.website__c) || rtrim(marketing_data__c.micro_assist_page__c,'?') = assist_page.url_trimmed
+where   marketing_data__c.isdeleted is false
+    and (
+  (marketing_data__c.micro_first_page__c is not null)
+  or 
+  (marketing_data__c.micro_assist_page__c is not null)
+  or 
+  (marketing_data__c.micro_conv_page__c is not null)
+    )
+
+
+
