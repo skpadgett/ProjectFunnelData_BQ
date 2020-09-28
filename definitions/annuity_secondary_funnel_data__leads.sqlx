@@ -10,14 +10,22 @@ config {
 
 */
 -- gets base information for secondary annuity leads FROM MD & Leads tables
-SELECT
+
+  SELECT
   DISTINCT marketing_data__c.id AS md_id,
   marketing_data__c.redis_id__c as redis_id,
   marketing_data__c.createddate AS md_created_date,
   CASE
-    WHEN marketing_data__c.id is not null THEN 1
-    ELSE null
-  END AS mds,
+     when (marketing_data__c.test_or_spam__c is false and lead.test_or_spam__c is false) THEN 1
+      when (marketing_data__c.test_or_spam__c is true and lead.test_or_spam__c is false) then null
+      when (marketing_data__c.test_or_spam__c is false and lead.test_or_spam__c is true) then null
+      when (marketing_data__c.test_or_spam__c is true and lead.test_or_spam__c is true) then null ELSE null
+    END AS mds,
+    CASE WHEN 
+      marketing_data__c.id is not null THEN 1
+      ELSE null
+    END AS raw_mds,
+ 
   marketing_data__c.adwords_campaign__c AS campaign__c,
   marketing_data__c.adwords_adgroup__c as adgroup__c,
   marketing_data__c.keyword_id__c as keyword__c,
@@ -43,21 +51,29 @@ SELECT
   marketing_data__c.traffic_source__c as traffic_source,
   lead.id as lead_id,
   lead.createddate as lead_created_date,
-  CASE
-    WHEN Lead.marketing_data_attribution__c IS not null THEN 1
-    ELSE null
-  END AS leads,
+CASE
+     when (marketing_data__c.test_or_spam__c is false and lead.test_or_spam__c is false) THEN 1
+      when (marketing_data__c.test_or_spam__c is true and lead.test_or_spam__c is false) then null
+      when (marketing_data__c.test_or_spam__c is false and lead.test_or_spam__c is true) then null
+      when (marketing_data__c.test_or_spam__c is true and lead.test_or_spam__c is true) then null ELSE null
+    END AS leads,
+    CASE WHEN 
+      marketing_data__c.id is not null THEN 1
+      ELSE null
+    END AS raw_leads,
+ 
 marketing_data__c.type_of_payment__c as type_of_payment,
 marketing_data__c.key_presses__c as key_presses,
 marketing_data__c.woopra_cookie_id__c as microanalytics_id,
-case when lower(marketing_data__c.micro_device__c) in ('android', 'iphone') then 'mobile' when lower(marketing_data__c.micro_device__c) in ('ipad') then 'tablet' when lower(marketing_data__c.micro_device__c) is null then null else lower(marketing_data__c.micro_device__c) end as device
+case when lower(marketing_data__c.micro_device__c) in ('android', 'iphone') then 'mobile' when lower(marketing_data__c.micro_device__c) in ('ipad') then 'tablet' when lower(marketing_data__c.micro_device__c) is null then null else lower(marketing_data__c.micro_device__c) end as device,
+marketing_data__c.business_partner__c as business_partner
+
 FROM
   lt_pa_salesforce.marketing_data__c
   INNER JOIN lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c
 WHERE
-  marketing_data__c.test_or_spam__c IS false
-  AND lead.test_or_spam__c IS FALSE
-  AND marketing_data__c.vertical__c in ('Annuity')
+  
+ marketing_data__c.vertical__c in ('Annuity')
   AND marketing_data__c.isdeleted is false
   AND lead.isdeleted is false
   AND (
@@ -67,4 +83,4 @@ WHERE
     OR (lead.cbc_annuity_type__c is null)
 
   )
- 
+

@@ -31,9 +31,11 @@ with final_data AS (
     A.lead_id,
     A.lead_created_date,
     A.leads as is_lead,
+    A.raw_leads as is_raw_lead,
     B.qualified_leads as is_qualified_lead,
     B.qualified_date,
-    C.preqls as is_preql
+    C.preqls as is_preql,
+    A.business_partner
   FROM
     ${ref("annuity_secondary_funnel_data__leads")} as A
     LEFT JOIN ${ref("annuity_secondary_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
@@ -59,9 +61,11 @@ with final_data AS (
     A.lead_id,
     A.lead_created_date,
     A.leads as is_lead,
+    A.raw_leads as is_raw_lead,
     B.qualified_leads as is_qualified_lead,
     B.qualified_date,
-    null :: int as is_preql
+    null :: int as is_preql,
+    A.business_partner
   FROM
     ${ref("mortgage_note_funnel_data__leads")} as A
     LEFT JOIN ${ref("mortgage_note_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
@@ -86,9 +90,11 @@ with final_data AS (
     A.lead_id,
     A.lead_created_date,
     A.leads as is_lead,
+    A.raw_leads as is_raw_lead,
     null :: int as is_qualified_lead,
     null :: date as qualified_date,
-    null :: int as is_preql
+    null :: int as is_preql,
+    A.business_partner 
   FROM
     ${ref("annuity_primary_funnel_data__leads")} as A
     -- LEFT JOIN apm_qualified_leads as B on A.lead_id = B.lead_id
@@ -123,8 +129,10 @@ SELECT
   ad_adgroup_id::varchar,
   ad_keyword_id::varchar,
   ad_creative_id::varchar,
+  business_partner::varchar,
   COALESCE(is_md,0)::int2 as is_md,
   coalesce(is_lead,0)::int2 as is_lead,
+  coalesce(is_raw_lead,0)::int2 as is_raw_lead,
   coalesce(is_qualified_lead,0)::int2 as is_qualified_lead,
 coalesce(is_preql,0)::int2 as is_preql
  
