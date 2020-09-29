@@ -64,7 +64,7 @@ CASE
  
 marketing_data__c.type_of_payment__c as type_of_payment,
 marketing_data__c.key_presses__c as key_presses,
-marketing_data__c.woopra_cookie_id__c as microanalytics_id,
+marketing_data__c.micro_session_id__c as microanalytics_id,
 case when lower(marketing_data__c.micro_device__c) in ('android', 'iphone') then 'mobile' when lower(marketing_data__c.micro_device__c) in ('ipad') then 'tablet' when lower(marketing_data__c.micro_device__c) is null then null else lower(marketing_data__c.micro_device__c) end as device,
 marketing_data__c.business_partner__c as business_partner
 
