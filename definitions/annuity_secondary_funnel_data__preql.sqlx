@@ -19,9 +19,8 @@ inner join lt_pa_salesforce.marketing_data__c on annuity_leads.md_id = marketing
 inner join lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c
 where
 (((marketing_data__c.lead_type__c = 'Form'
-         AND marketing_data__c.type_of_payment__c IN ('Structured Settlement',
-                                                      'Single Premium Immediate Annuity',
-                                                      'Lottery Payments'))
+         AND marketing_data__c.type_of_payment__c IN ('Structured Settlement', 'structured_settlement', 'Single Premium Immediate Annuity', 'single_premium_immediate', 'Lottery Payments', 'lottery_payments'
+                                                      ))
         OR (marketing_data__c.lead_type__c = 'Form'
             AND marketing_data__c.website__c = 'structuredsettlements.com'))
        OR ((marketing_data__c.lead_type__c = 'Phone'
