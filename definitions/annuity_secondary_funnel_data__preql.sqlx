@@ -20,7 +20,7 @@ inner join lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_a
 where
 (((marketing_data__c.lead_type__c = 'Form'
          AND marketing_data__c.type_of_payment__c IN ('Structured Settlement',
-                                                      'Single Premium Annuity',
+                                                      'Single Premium Immediate Annuity',
                                                       'Lottery Payments'))
         OR (marketing_data__c.lead_type__c = 'Form'
             AND marketing_data__c.website__c = 'structuredsettlements.com'))
