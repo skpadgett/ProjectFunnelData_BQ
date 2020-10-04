@@ -8,7 +8,7 @@
 
 config { type: "view" }
 
-  
+
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
@@ -27,12 +27,19 @@ config { type: "view" }
          Account.opportunity__c IS NOT NULL
         AND Opportunity.stage_sendover_date_time__c IS NOT NULL
         AND Account.effect__c ILIKE '%Mesothelioma%'
-       AND (Account.u_s_exposure__c = 'Yes')
-       AND Account.within_statute_of_limitations__c = 'Yes'
-       AND Account.currently_represented__c in ('No', 'Yes, after arrival')
+      AND Account.within_statute_of_limitations__c = 'Yes'
        AND Opportunity.is_first_sent_over_opportunity__c IS TRUE
+      AND (("Account"."u_s_exposure__c" IN ('Yes')
+		and account.country_of_exposure__c is null)
+		or
+		("Account"."u_s_exposure__c" is null
+	   and account.country_of_exposure__c in ('United States of America'))
+	   or 
+		("Account"."u_s_exposure__c" IN ('Yes')
+			and account.country_of_exposure__c in ('United States of America')))
+	
+	    
+      AND "Account"."currently_represented__c" IN ('No',       'Yes, after arrival', 'Not Represented')
   and lead.isdeleted is false
   and account.isdeleted is false
   and opportunity.isdeleted is false
-
-

@@ -38,8 +38,17 @@ first_meeting_date.first_meeting_scheduled_date as qualified_first_meeting_sched
     WHERE 
 Opportunity.meeting_scheduled_date__c IS not null  
         AND Account.effect__c ILIKE '%Mesothelioma%' 
-       AND Account.u_s_exposure__c = 'Yes'
+
         AND Account.within_statute_of_limitations__c = 'Yes'
+AND (("Account"."u_s_exposure__c" IN ('Yes')
+		and account.country_of_exposure__c is null)
+	   
+		or
+		("Account"."u_s_exposure__c" is null
+	   and account.country_of_exposure__c in ('United States of America'))
+	   or 
+		("Account"."u_s_exposure__c" IN ('Yes')
+			and account.country_of_exposure__c in ('United States of America')))
 
      
   and lead.isdeleted is false

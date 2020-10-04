@@ -9,6 +9,8 @@
 config { type: "view" }
 
   -- this includes any sendover associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count. 
+   
+
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
@@ -18,6 +20,7 @@ config { type: "view" }
         ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
         account.effect__c as effect,
         account.u_s_exposure__c as u_s_exposure,
+        account.country_of_exposure__c as country_of_exposure,
         account.within_statute_of_limitations__c as within_statute_of_limitiations,
         account.currently_represented__c as currently_represented,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_sendover,
