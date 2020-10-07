@@ -1,4 +1,4 @@
-config { type: "view" }
+config { type: "table" }
 
   -- Final data selection
 SELECT DISTINCT
