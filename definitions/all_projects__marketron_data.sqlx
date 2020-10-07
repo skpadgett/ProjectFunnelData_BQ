@@ -1,5 +1,5 @@
 config {
-  type: "view"
+  type: "table"
 }
 -- shows every MD that has either a first page, assist page, or conversion page associated with their record along with the corresponding marketron data for those pages. If marketron data is not available for the pages in the record their fields are empty
 

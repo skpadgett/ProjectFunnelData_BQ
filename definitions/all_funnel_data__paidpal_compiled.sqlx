@@ -1,4 +1,4 @@
-config { type: "view" }
+config { type: "table" }
 
 select distinct
 md_id,
