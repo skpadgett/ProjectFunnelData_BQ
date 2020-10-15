@@ -86,7 +86,7 @@ LEFT JOIN ${ref("asbestos_funnel_data__leads")} AS B ON A.md_id = B.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__raw_leads")} AS BB on A.md_id = BB.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__meso_form_leads")} AS C ON A.md_id = C.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__accounts")} AS D ON A.md_id = D.md_id
-
+LEFT JOIN ${ref("asbestos_funnel_data__confirmed_meso_leads")} AS E ON A.md_id = E.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__qualified_leads")} AS F ON A.md_id = F.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__viables")} AS G ON A.md_id = G.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__qualified_accounts")} as H on A.md_id = H.md_id

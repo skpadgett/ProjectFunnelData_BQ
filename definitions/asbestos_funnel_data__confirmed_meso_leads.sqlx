@@ -14,7 +14,7 @@ config { type: "view" }
         lead.id as lead_id,
 
         lead.createddate as lead_createddatetime,
-        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_confirmes_meso_lead
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_confirmed_meso_lead
     FROM
         lt_pa_salesforce.lead AS Lead 
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
