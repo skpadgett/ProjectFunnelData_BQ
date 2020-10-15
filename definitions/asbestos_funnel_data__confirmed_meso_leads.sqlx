@@ -12,16 +12,13 @@ config { type: "view" }
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
-        account.id as account_id,
-        account.createddate as account_createddatetime,
-        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_meso_account
+
+        lead.createddate as lead_createddatetime,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_confirmes_meso_lead
     FROM
-        lt_pa_salesforce.account AS Account
-        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        lt_pa_salesforce.lead AS Lead 
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
     WHERE 
-        account.effect__c ILIKE '%Mesothelioma%'    
-        AND account.test__c IS false
+        lead.patient_diagnosis__c ILIKE '%Mesothelioma%'   
   and lead.isdeleted is false
- and account.isdeleted is false  
-    AND account.recordtypeid IN ('01215000001YnbxAAC','0121C000001UjlhQAC')
+

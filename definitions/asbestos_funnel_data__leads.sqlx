@@ -20,5 +20,5 @@ config { type: "view" }
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds on Lead.marketing_data_attribution__c = mds.md_id
     WHERE
         Lead.test_or_spam__c IS FALSE        
-        AND Lead.source__c NOT ILIKE '%PA%DID%'
+        AND mds.marketing_channels != 'Sales'
   and lead.isdeleted is false

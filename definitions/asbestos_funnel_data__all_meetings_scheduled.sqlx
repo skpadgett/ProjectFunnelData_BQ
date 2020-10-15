@@ -23,6 +23,7 @@ config { type: "view" }
         account.within_statute_of_limitations__c as within_statute_of_limitiations,
         account.currently_represented__c as currently_represented,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_meeting_scheduled,
+             CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' then 1 else null end AS is_all_meso_meeting_scheduled,
  Opportunity.meeting_scheduled_date__c as all_meeting_scheduleddatetime
     FROM 
         lt_pa_salesforce.account AS Account

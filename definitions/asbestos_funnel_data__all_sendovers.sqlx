@@ -24,6 +24,7 @@ config { type: "view" }
         account.within_statute_of_limitations__c as within_statute_of_limitiations,
         account.currently_represented__c as currently_represented,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_sendover,
+        CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' then 1 else null end AS is_all_meso_sendover,
   Opportunity.stage_sendover_date_time__c as all_sendoverdatetime
     FROM 
         lt_pa_salesforce.account AS Account

@@ -30,7 +30,7 @@ COALESCE(B.is_unreached_lead,0)::int2 AS is_unreached_lead,
 COALESCE(B.is_pa_meso_form_lead,0)::int2 as is_pa_meso_form_lead,
 COALESCE(D.is_account,0)::int2 as is_account,
 COALESCE(D.is_currently_workable_account,0)::int2 as is_currently_workable_account,
-COALESCE(E.is_meso_account,0)::int2 as is_meso_account,
+--COALESCE(E.is_confirmed_meso_lead,0)::int2 as is_confirmed_meso_lead,
 COALESCE(F.is_qualified_lead,0)::int2 AS is_qualified_lead,
 COALESCE(G.is_viable,0)::int2 as is_viable,
 COALESCE(H.is_qualified_account,0)::int2 as is_qualified_account,
@@ -46,7 +46,7 @@ COALESCE(O.signing_value,0)::decimal(4,2) AS signing_value
 FROM ${ref("asbestos_funnel_data__raw_mds")} AS A
 LEFT JOIN ${ref("asbestos_funnel_data__raw_leads")} as B on A.md_id = B.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__accounts")} AS D ON A.md_id = D.md_id
-LEFT JOIN ${ref("asbestos_funnel_data__meso_accounts")} AS E ON A.md_id = E.md_id
+
 LEFT JOIN ${ref("asbestos_funnel_data__qualified_leads")} AS F ON A.md_id = F.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__viables")} AS G ON A.md_id = G.md_id
 LEFT JOIN ${ref("asbestos_funnel_data__qualified_accounts")} as H on A.md_id = H.md_id

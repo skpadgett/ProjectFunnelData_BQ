@@ -9,7 +9,32 @@ config {
 * Learn more on https://docs.dataform.co/guides/datasets/
 
 */
-SELECT
+
+-- This metric is now 'Sales Qualified Lead' as of Oct 2020
+
+   SELECT DISTINCT
+        lead.marketing_data_attribution__c AS md_id,
+        lead.id as lead_id,
+        account.id as account_id,
+        account.createddate as account_createddatetime,
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_qualified_lead,
+        CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ILIKE '%mesothelioma%' then 1 else null end AS is_qualified_lead,
+        account.effect__c as effect,
+        account.sql_date__c as sql_datetime --replaced first_viable__c
+       
+    FROM
+        lt_pa_salesforce.account AS Account
+        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
+    WHERE 
+    account.is_sql__c is true
+ and lead.isdeleted is false
+  and account.isdeleted is false
+
+
+
+--begin legacy filters for old qualified lead metric
+/*SELECT
   DISTINCT lead.marketing_data_attribution__c AS md_id,
   lead.id as lead_id,
   account.id as account_id,
@@ -51,4 +76,4 @@ WHERE
   )
   AND Account.effect__c ILIKE '%Mesothelioma%'
   and lead.isdeleted is false
-  and account.isdeleted is false
+  and account.isdeleted is false */
