@@ -25,7 +25,7 @@ config { type: "view" }
         opportunity.sub_status__c as opportunity_sub_status,
         opportunity.meeting_type__c as opportunity_meeting_type,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_meeting_scheduled,
-             CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' then 1 else null end AS is_all_meso_meeting_scheduled,
+             CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' then 1 else null end AS is_all_mktg_meeting_scheduled,
  Opportunity.meeting_scheduled_date__c as all_meeting_scheduleddatetime,
  opportunity.meeting_happened_date__c as all_meeting_happeneddatetime
     FROM 

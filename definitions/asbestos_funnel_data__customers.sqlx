@@ -43,9 +43,9 @@ with customers_setup as (
         opportunity_id,
         account_effect,
         signing_value as all_signing_value,
-        case when signing_value in (0.25, 1) and account_effect = 'Mesothelioma' then signing_value else 0 end as signing_value,
+        case when signing_value in (0.25, 1) and account_effect = 'Mesothelioma' then signing_value else 0 end as mktg_signing_value,
         is_customer as is_all_customer,
-     case when signing_value in (0.25, 1) and account_effect = 'Mesothelioma' then 1 else 0 end as is_customer,
+     case when signing_value in (0.25, 1) and account_effect = 'Mesothelioma' then 1 else 0 end as is_mktg_customer,
   		opportunity_signeddatetime,
         opportunity_name,
         opportunity_law_firm

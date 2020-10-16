@@ -34,7 +34,7 @@ group by 1
         opportunity.sub_status__c as opportunity_sub_status,
         opportunity.meeting_type__c as opportunity_meeting_type,
      CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_first_meeting_scheduled,
-     CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' then 1 else null end AS is_first_meso_meeting_scheduled,
+     CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' then 1 else null end AS is_first_mktg_meeting_scheduled,
 first_meeting_date.first_meeting_scheduled_date as first_meeting_scheduleddatetime
 
     FROM 

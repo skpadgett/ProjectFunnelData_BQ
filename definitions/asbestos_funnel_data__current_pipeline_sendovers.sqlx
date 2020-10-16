@@ -31,7 +31,7 @@ SELECT
     when Lead.marketing_data_attribution__c is not null
     and account.effect__c ilike '%mesothelioma%' and opportunity.sub_status__c not in ('Potential Call-In') then 1
     else null
-  end AS is_current_pipeline_meso_sendover,
+  end AS is_current_pipeline_mktg_sendover,
   Opportunity.stage_sendover_date_time__c as current_pipeline_traditional_sendover_datetime,
   opportunity.stage_potential_call_in_date_time__c as current_pipeline_pci_datetime,
   opportunity.stage_warm_sendover_date_time__c as current_pipeline_warm_transfer_datetime

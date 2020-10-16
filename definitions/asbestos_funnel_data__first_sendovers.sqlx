@@ -9,6 +9,8 @@ config {
 * Learn more on https://docs.dataform.co/guides/datasets/
 
 */
+
+-- utilizes 'is first sent overr opportunity' as signifier of first send over. Marketing does not want to count PCIs, so if there is a PCI that is marked as the first sent over opportunity, even if it has meso, it is not counted as a marketing first send over and is not included in the unique count of send overs for the account. That also means that if there is another send over with a traditional or warm sendover date stamp, it is not counted in this version of the query
 SELECT
   DISTINCT 
   
@@ -27,7 +29,7 @@ SELECT
     and account.effect__c ilike '%mesothelioma%'
     AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1
     else null
-  end AS is_first_meso_sendover,
+  end AS is_first_mktg_sendover,
   account.effect__c as account_patient_diagnosis,
   account.type_of_mesothelioma__c as account_diagnosis_details,
   account.status__c as account_status,
