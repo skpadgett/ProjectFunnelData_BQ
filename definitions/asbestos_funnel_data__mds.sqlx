@@ -40,7 +40,10 @@ config { type: "view" }
   -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
   "Marketing Data C".assist_type__c as assist_type,
   case when lower("Marketing Data C".micro_device__c) in ('android', 'iphone') then 'mobile' when lower("Marketing Data C".micro_device__c) in ('ipad') then 'tablet' when lower("Marketing Data C".micro_device__c) is null then null else lower("Marketing Data C".micro_device__c) end as device,
-  marketing_data__c.key_presses__c as key_presses
+ "Marketing Data C".key_presses__c as key_presses,
+ "Marketing Data C".micro_first_page__c as micro_first_page,
+"Marketing Data C".micro_assist_page__c as micro_assist_page,
+  "Marketing Data C".micro_conv_page__c as micro_conv_page
 
     FROM
         lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 

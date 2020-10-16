@@ -36,8 +36,14 @@ config { type: "view" }
  "Marketing Data C".vertical__c as vertical,
  "Marketing Data C".invoca_promo_description__c as invoca_promo_description,
  "Marketing Data C".campaign_name__c as invoca_campaign,
-  case when "Marketing Data C".campaign_name__c = 'Print' then to_date("Marketing Data C".utm_content__c, 'MM-YYYY') else null end as traditional_publication_date
+  case when "Marketing Data C".campaign_name__c = 'Print' then to_date("Marketing Data C".utm_content__c, 'MM-YYYY') else null end as traditional_publication_date,
   -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
+    case when lower("Marketing Data C".micro_device__c) in ('android', 'iphone') then 'mobile' when lower("Marketing Data C".micro_device__c) in ('ipad') then 'tablet' when lower("Marketing Data C".micro_device__c) is null then null else lower("Marketing Data C".micro_device__c) end as device,
+ "Marketing Data C".key_presses__c as key_presses,
+ "Marketing Data C".micro_first_page__c as micro_first_page,
+"Marketing Data C".micro_assist_page__c as micro_assist_page,
+  "Marketing Data C".micro_conv_page__c as micro_conv_page
+
   
     FROM
         lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
