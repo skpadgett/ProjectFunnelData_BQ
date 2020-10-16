@@ -32,14 +32,15 @@ config { type: "view" }
  "Marketing Data C".lead_type__c as lead_type,
  "Marketing Data C".effect__c as md_effect,
  "Marketing Data C".traffic_source__c as traffic_source,
- case when "Marketing Data C".paid__c is true then 'Paid' else 'Organic' end as paid,
+ case when "Marketing Data C".marketing_channels__c = 'Paid' then 'Paid' else 'Organic' end as paid,
  "Marketing Data C".vertical__c as vertical,
  "Marketing Data C".invoca_promo_description__c as invoca_promo_description,
  "Marketing Data C".campaign_name__c as invoca_campaign,
   case when "Marketing Data C".campaign_name__c = 'Print' then to_date("Marketing Data C".utm_content__c, 'MM-YYYY') else null end as traditional_publication_date,
   -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
   "Marketing Data C".assist_type__c as assist_type,
-  case when lower("Marketing Data C".micro_device__c) in ('android', 'iphone') then 'mobile' when lower("Marketing Data C".micro_device__c) in ('ipad') then 'tablet' when lower("Marketing Data C".micro_device__c) is null then null else lower("Marketing Data C".micro_device__c) end as device
+  case when lower("Marketing Data C".micro_device__c) in ('android', 'iphone') then 'mobile' when lower("Marketing Data C".micro_device__c) in ('ipad') then 'tablet' when lower("Marketing Data C".micro_device__c) is null then null else lower("Marketing Data C".micro_device__c) end as device,
+  marketing_data__c.key_presses__c as key_presses
 
     FROM
         lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 

@@ -7,7 +7,7 @@
 */
 
 config { type: "view" }
-
+-- LEGACY METRIC OCT 2020
 
     SELECT DISTINCT
         lead.marketing_data_attribution__c AS md_id,

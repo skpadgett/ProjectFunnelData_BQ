@@ -9,6 +9,7 @@ config {
 * Learn more on https://docs.dataform.co/guides/datasets/
 
 */
+-- LEGACY METRIC OCT 2020
 -- this includes any first sendover associated with the account during the time period. Multiples will appear here if the opportunity fields are used in a count.
 
 SELECT

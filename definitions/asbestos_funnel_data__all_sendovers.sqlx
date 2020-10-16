@@ -18,14 +18,17 @@ config { type: "view" }
         opportunity.id as opportunity_id,
         opportunity.name as opportunity_name,
         ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
-        account.effect__c as effect,
-        account.u_s_exposure__c as u_s_exposure,
-        account.country_of_exposure__c as country_of_exposure,
-        account.within_statute_of_limitations__c as within_statute_of_limitiations,
-        account.currently_represented__c as currently_represented,
+        account.effect__c as account_patient_diagnosis,
+        account.type_of_mesothelioma__c as account_diagnosis_details,
+        account.status__c as account_status,
+        account.sub_status__c as account_sub_status,
+        opportunity.status__c as opportunity_status,
+        opportunity.sub_status__c as opportunity_sub_status,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_sendover,
-        CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' then 1 else null end AS is_all_meso_sendover,
-  Opportunity.stage_sendover_date_time__c as all_sendoverdatetime
+        CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1 else null end AS is_all_meso_sendover,
+ Opportunity.stage_sendover_date_time__c as all_traditional_sendoverdatetime,
+  opportunity.stage_potential_call_in_date_time__c as all_pcidatetime,
+  opportunity.stage_warm_sendover_date_time__c as all_warm_transferdatetime
     FROM 
         lt_pa_salesforce.account AS Account
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
@@ -33,7 +36,10 @@ config { type: "view" }
         INNER JOIN lt_pa_salesforce.opportunity AS Opportunity ON account.id = opportunity.accountid
     WHERE
          Account.opportunity__c IS NOT NULL
-        AND Opportunity.stage_sendover_date_time__c IS NOT NULL
+         and ((Opportunity.stage_sendover_date_time__c is not null)
+         or (opportunity.stage_potential_call_in_date_time__c is not null)
+         or (opportunity.stage_warm_sendover_date_time__c is not null))
+        
   and lead.isdeleted is false
   and account.isdeleted is false
   and opportunity.isdeleted is false

@@ -13,13 +13,13 @@ config { type: "view" }
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
         lead.createddate as lead_createddatetime,
-        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_meso_form_lead
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_marketing_qualified_lead
     FROM
         lt_pa_salesforce.lead AS Lead  
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON Lead.marketing_data_attribution__c = mds.md_id
     WHERE
         Lead.test_or_spam__c IS FALSE        
-        AND lead.effect__c ILIKE '%Mesothelioma%'    
-        AND mds.lead_type IN ('Form')  
-        AND Lead.source__c NOT ILIKE '%PA%DID%'
+        AND mds.md_effect ILIKE '%Mesothelioma%'    
+        
+        AND mds.marketing_channels != 'Sales'
   and lead.isdeleted is false

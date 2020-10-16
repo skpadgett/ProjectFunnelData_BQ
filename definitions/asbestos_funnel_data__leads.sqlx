@@ -12,7 +12,21 @@ config { type: "view" }
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
+        lead.lead_status__c as lead_status,
+        lead.sub_status__c as lead_sub_status,
         lead.createddate as lead_createddatetime,
+        mds.md_effect,
+        mds.lead_type,
+        lead.patient_diagnosis__c as lead_patient_diagnosis,
+        lead.diagnosis_type__c as lead_diagnosis_details,
+        lead.country_of_exposure__c as lead_country_of_exposure,
+        lead.us_owned_company__c as lead_us_owned_company,
+        lead.date_of_diagnosis__c as lead_date_of_diagnosis,
+        lead.date_of_sol_expiration__c as lead_date_of_sol_expiration,
+        lead.legal_status__c as lead_legal_status,
+        lead.is_qualified__c as lead_is_sql,
+        lead.is_qualified_date_time__c as lead_is_sql_datetime,
+        lead.disqualified_reasons__c as lead_disqualified_reasons,
         CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_lead
  
     FROM

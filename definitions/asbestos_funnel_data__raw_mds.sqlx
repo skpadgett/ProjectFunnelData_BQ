@@ -10,6 +10,7 @@ config { type: "view" }
 
      SELECT DISTINCT 
         "Marketing Data C".id AS md_id,
+        "Marketing Data C".test_or_spam__c as test_or_spam,
         redis_id__c as redis_id,
         createddate AS md_createddatetime,
         CASE when id is not null then 1 else null end AS is_md,
@@ -31,7 +32,7 @@ config { type: "view" }
  "Marketing Data C".lead_type__c as lead_type,
  "Marketing Data C".effect__c as md_effect,
  "Marketing Data C".traffic_source__c as traffic_source,
- case when "Marketing Data C".paid__c is true then 'Paid' else 'Organic' end as paid,
+ case when "Marketing Data C".marketing_channels__c = 'Paid' then 'Paid' else 'Organic' end as paid,
  "Marketing Data C".vertical__c as vertical,
  "Marketing Data C".invoca_promo_description__c as invoca_promo_description,
  "Marketing Data C".campaign_name__c as invoca_campaign,

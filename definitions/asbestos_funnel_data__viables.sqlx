@@ -7,7 +7,7 @@
 */
 
 config { type: "view" }
-
+-- LEGACY METRIC OCT 2020
 
     SELECT DISTINCT
         lead.marketing_data_attribution__c AS md_id,
@@ -15,7 +15,7 @@ config { type: "view" }
         account.id as account_id,
         account.createddate as account_createddatetime,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_viable,
-        CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ILIKE '%mesothelioma' then 1 else null end AS is_viable,
+        CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ILIKE '%mesothelioma%' then 1 else null end AS is_viable,
         account.effect__c as effect,
         account.sql_date__c as first_viable_datetime --replaced first_viable__c
        
