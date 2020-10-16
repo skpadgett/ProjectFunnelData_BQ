@@ -32,7 +32,7 @@ SELECT
     when Lead.marketing_data_attribution__c is not null
     and account.effect__c ilike '%mesothelioma%' then 1
     else null
-  end AS is_current_pipeline_mktg_meeting_scheduled,
+  end AS is_mktg_current_pipeline_meeting_scheduled,
   Opportunity.meeting_scheduled_date__c as current_pipeline_meeting_scheduleddatetime
 FROM
   lt_pa_salesforce.account AS Account

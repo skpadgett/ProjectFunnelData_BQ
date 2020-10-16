@@ -29,8 +29,8 @@ is_confirmed_meso_lead as is_meso_account,
 is_mktg_sales_qualified_lead as is_qualified_lead,
 --is_viable,
 --is_qualified_account,
-is_first_mktg_sendover as is_account_sendover,
-is_first_mktg_meeting_scheduled as is_account_meeting,
+is_mktg_first_sendover as is_account_sendover,
+is_mktg_first_meeting_scheduled as is_account_meeting,
 mktg_signing_value as is_customer,
 null::int as is_torts_mesh_revision
 
