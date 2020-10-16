@@ -27,7 +27,7 @@ config { type: "view" }
         account.us_owned_company__c as account_us_owned_company,
         account.date_of_diagnosis__c as account_date_of_diagnosis,
         account.date_of_sol_expiration__c as account_date_of_sol_expiration,
-        account.currently_represented__c as account_currently_represented,
+        account.currently_represented__c as account_legal_status,
         account.out_of_sol_override__c as account_out_of_sol_override,
         account.is_sql__c as account_is_sql,
         account.sql_date__c as account_sql_datetime,
