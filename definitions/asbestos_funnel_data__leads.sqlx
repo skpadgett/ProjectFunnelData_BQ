@@ -25,7 +25,7 @@ config { type: "view" }
         lead.date_of_sol_expiration__c as lead_date_of_sol_expiration,
         lead.legal_status__c as lead_legal_status,
         lead.is_qualified__c as lead_is_sql,
-        lead.is_qualified_date_time__c as lead_is_sql_datetime,
+        lead.is_qualified_date_time__c as lead_sqldatetime,
         lead.disqualified_reasons__c as lead_disqualified_reasons,
         CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_lead
  
