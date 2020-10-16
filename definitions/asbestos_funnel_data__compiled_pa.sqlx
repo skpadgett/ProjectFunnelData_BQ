@@ -14,10 +14,13 @@ B.lead_owner::varchar,
 B.lead_status::varchar,
 B.lead_sub_status::varchar,
 B.lead_effect::varchar,
+B.lead_patient_diagnosis::varchar,
+B.lead_diagnosis_details::varchar,
 D.account_owner::varchar,
 D.account_status::varchar,
 D.account_sub_status::varchar,
-D.account_effect::varchar,
+D.account_patient_diagnosis::varchar,
+D.account_diagnosis_details::varchar,
 COALESCE(A.is_md,0)::int2 AS is_md,
 COALESCE(B.is_raw_lead,0)::int2 AS is_raw_lead,
 COALESCE(B.is_reached_lead,0)::int2 AS is_reached_lead,
@@ -26,12 +29,12 @@ COALESCE(B.is_pa_meso_form_lead,0)::int2 as is_pa_meso_form_lead,
 COALESCE(D.is_account,0)::int2 as is_account,
 COALESCE(D.is_currently_workable_account,0)::int2 as is_currently_workable_account,
 COALESCE(E.is_confirmed_meso_lead,0)::int2 as is_confirmed_meso_lead,
-COALESCE(F.is_qualified_lead,0)::int2 AS is_qualified_lead,
+COALESCE(F.is_sales_qualified_lead,0)::int2 AS is_qualified_lead,
 COALESCE(G.is_viable,0)::int2 as is_viable,
 COALESCE(H.is_qualified_account,0)::int2 as is_qualified_account,
 
-COALESCE(O.is_customer,0)::int2 as is_customer,
-COALESCE(O.signing_value,0)::decimal(4,2) AS signing_value
+COALESCE(O.is_all_customer,0)::int2 as is_all_customer,
+COALESCE(O.all_signing_value,0)::decimal(4,2) AS all_signing_value
 
 FROM ${ref("asbestos_funnel_data__raw_mds")} AS A
 LEFT JOIN ${ref("asbestos_funnel_data__raw_leads")} as B on A.md_id = B.md_id

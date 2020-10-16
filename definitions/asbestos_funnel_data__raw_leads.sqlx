@@ -15,7 +15,7 @@ config { type: "view" }
     lead.lead_status__c as lead_status,
     lead.sub_status__c as lead_sub_status,
     mds.md_effect,
-    lead.effect__c,
+    lead.effect__c as lead_effect,
     mds.lead_type,
     lead.createddate as lead_createddatetime,
     CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_raw_lead,
