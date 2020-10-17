@@ -77,20 +77,23 @@ COALESCE(F.is_sales_qualified_lead,0)::int2 AS is_sales_qualified_lead,
 COALESCE(F.is_mktg_sales_qualified_lead,0)::int2 AS is_mktg_sales_qualified_lead,
 COALESCE(G.is_viable,0)::int2 as is_viable,
 COALESCE(H.is_qualified_account,0)::int2 as is_qualified_account,
-COALESCE(I.is_all_sendover,0)::int2 as is_all_sendover,
-COALESCE(I.is_mktg_all_sendover,0)::int2 as is_mktg_all__sendover,
+
 COALESCE(J.is_first_sendover,0)::int2 as is_first_sendover,
 COALESCE(J.is_mktg_first_sendover,0)::int2 as is_mktg_first_sendover,
 COALESCE(K.is_qualified_all_sendover,0)::int2 as is_qualified_all_sendover,
-COALESCE(L.is_all_meeting_scheduled,0)::int2 as is_all_meeting_scheduled,
-COALESCE(L.is_mktg_all_meeting_scheduled,0)::int2 as is_mktg_all_meeting_scheduled,
+
 COALESCE(M.is_first_meeting_scheduled,0)::int2 as is_first_meeting_scheduled,
 COALESCE(M.is_mktg_first_meeting_scheduled,0)::int2 as is_mktg_first_meeting_scheduled,
 COALESCE(N.is_qualified_all_meeting_scheduled,0)::int2 as is_qualified_all_meeting_scheduled,
 COALESCE(O.is_mktg_customer,0)::int2 as is_mktg_customer,
 COALESCE(O.is_all_customer,0)::int2 as is_all_customer,
 COALESCE(O.mktg_signing_value,0)::decimal(4,2) AS mktg_signing_value,
-COALESCE(O.all_signing_value,0)::decimal(4,2) AS all_signing_value
+COALESCE(O.all_signing_value,0)::decimal(4,2) AS all_signing_value,
+-- the following columns requre de-duping because it's possible to have multiple opps associated with an account. This was causing duplication in aggregations using data from this table.
+COALESCE(max(I.is_all_sendover),0)::int2 as is_all_sendover,
+COALESCE(max(I.is_mktg_all_sendover),0)::int2 as is_mktg_all__sendover,
+COALESCE(max(L.is_all_meeting_scheduled),0)::int2 as is_all_meeting_scheduled,
+COALESCE(max(L.is_mktg_all_meeting_scheduled),0)::int2 as is_mktg_all_meeting_scheduled
 
 FROM ${ref("asbestos_funnel_data__mds")} AS A
 LEFT JOIN ${ref("asbestos_funnel_data__leads")} AS B ON A.md_id = B.md_id
@@ -112,3 +115,7 @@ LEFT JOIN ${ref('asbestos_funnel_data__first_sendovers')} as P on I.account_id =
 LEFT JOIN ${ref('asbestos_funnel_data__first_meetings_scheduled')} as Q on L.account_id = Q.account_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_sendovers')} as R on O.opportunity_id = R.opportunity_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_meetings_scheduled')} as S on O.opportunity_id = S.opportunity_id
+
+
+group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57
+
