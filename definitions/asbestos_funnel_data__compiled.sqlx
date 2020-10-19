@@ -73,6 +73,7 @@ COALESCE(B.is_lead,0)::int2 AS is_lead,
 COALESCE(C.is_marketing_qualified_lead,0)::int2 as is_marketing_qualified_lead,
 COALESCE(D.is_account,0)::int2 as is_account,
 COALESCE(E.is_confirmed_meso_lead,0)::int2 as is_confirmed_meso_lead,
+COALESCE(E.is_mktg_confirmed_meso_lead,0)::int2 as is_mktg_confirmed_meso_lead,
 COALESCE(F.is_sales_qualified_lead,0)::int2 AS is_sales_qualified_lead,
 COALESCE(F.is_mktg_sales_qualified_lead,0)::int2 AS is_mktg_sales_qualified_lead,
 COALESCE(G.is_viable,0)::int2 as is_viable,
@@ -117,5 +118,6 @@ LEFT JOIN ${ref('asbestos_funnel_data__all_sendovers')} as R on O.opportunity_id
 LEFT JOIN ${ref('asbestos_funnel_data__all_meetings_scheduled')} as S on O.opportunity_id = S.opportunity_id
 
 
-group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57
+group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58
+
 

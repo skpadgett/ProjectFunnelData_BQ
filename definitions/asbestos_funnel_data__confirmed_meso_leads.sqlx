@@ -7,18 +7,21 @@
 */
 
 config { type: "view" }
-
-
+        -- note for mktg confirmed meso lead: there are nulls in marketing_channels prior to 2017, but we are excluding them by design-- we have no way of knowing what channel they are from and are not supporting data prior to 2017  
     SELECT DISTINCT 
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
-
+        mds.marketing_channels,
         lead.createddate as lead_createddatetime,
-        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_confirmed_meso_lead
+        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_confirmed_meso_lead,
+    
+     CASE when Lead.marketing_data_attribution__c is not null and mds.marketing_channels != 'Sales' then 1 else null end AS is_mktg_confirmed_meso_lead   
     FROM
         lt_pa_salesforce.lead AS Lead 
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
     WHERE 
         lead.patient_diagnosis__c ILIKE '%Mesothelioma%'   
   and lead.isdeleted is false
+  and lead.test_or_spam__c is false
+
 

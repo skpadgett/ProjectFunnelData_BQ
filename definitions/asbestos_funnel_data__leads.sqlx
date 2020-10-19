@@ -17,6 +17,7 @@ config { type: "view" }
         lead.createddate as lead_createddatetime,
         mds.md_effect,
         mds.lead_type,
+        mds.marketing_channels,
         lead.patient_diagnosis__c as lead_patient_diagnosis,
         lead.diagnosis_type__c as lead_diagnosis_details,
         lead.country_of_exposure__c as lead_country_of_exposure,
@@ -33,6 +34,7 @@ config { type: "view" }
         lt_pa_salesforce.lead AS Lead 
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds on Lead.marketing_data_attribution__c = mds.md_id
     WHERE
-        Lead.test_or_spam__c IS FALSE        
+        Lead.test_or_spam__c IS FALSE  
+        -- note: there are nulls in marketing_channels prior to 2017, but we are excluding them by design-- we have no way of knowing what channel they are from and are not supporting data prior to 2017      
         AND mds.marketing_channels != 'Sales'
   and lead.isdeleted is false
