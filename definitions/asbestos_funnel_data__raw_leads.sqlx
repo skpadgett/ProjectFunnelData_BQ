@@ -32,7 +32,7 @@ config { type: "view" }
         lead.legal_status__c as lead_legal_status,
         lead.is_qualified__c as lead_is_sql,
         lead.is_qualified_date_time__c as lead_sqldatetime,
-        lead.disqualified_reasons__c as lead_disqualified_reasons
+        lead.disqualified_reasons__c as lead_disqualified_reasons,lead.direct_to_firm_override__c as lead_direct_to_firm_override
     
 
 FROM

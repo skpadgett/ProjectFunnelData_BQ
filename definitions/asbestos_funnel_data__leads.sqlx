@@ -28,6 +28,7 @@ config { type: "view" }
         lead.is_qualified__c as lead_is_sql,
         lead.is_qualified_date_time__c as lead_sqldatetime,
         lead.disqualified_reasons__c as lead_disqualified_reasons,
+        lead.direct_to_firm_override__c as lead_direct_to_firm_override,
         CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_lead
  
     FROM
