@@ -24,8 +24,9 @@ config { type: "view" }
         account.sub_status__c as account_sub_status,
         opportunity.status__c as opportunity_status,
         opportunity.sub_status__c as opportunity_sub_status,
-        CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_sendover,
+        CASE when Lead.marketing_data_attribution__c is not null AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1 else null end AS is_all_sendover,
         CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1 else null end AS is_mktg_all_sendover,
+         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_pci_sendover,
  Opportunity.stage_sendover_date_time__c as all_traditional_sendoverdatetime,
   opportunity.stage_potential_call_in_date_time__c as all_pcidatetime,
   opportunity.stage_warm_sendover_date_time__c as all_warm_transferdatetime
@@ -43,6 +44,5 @@ config { type: "view" }
   and lead.isdeleted is false
   and account.isdeleted is false
   and opportunity.isdeleted is false
-
 
 

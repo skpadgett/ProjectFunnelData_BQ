@@ -10,8 +10,10 @@ config {
 
 */
 
--- utilizes 'is first sent overr opportunity' as signifier of first send over. Marketing does not want to count PCIs, so if there is a PCI that is marked as the first sent over opportunity, even if it has meso, it is not counted as a marketing first send over and is not included in the unique count of send overs for the account. That also means that if there is another send over with a traditional or warm sendover date stamp, it is not counted in this version of the query
-SELECT
+-- utilizes 'is first sent over opportunity' as signifier of first send over. Marketing does not want to count PCIs, so if there is a PCI that is marked as the first sent over opportunity, even if it has meso, it is not counted as a marketing first send over and is not included in the unique count of send overs for the account. That also means that if there is another send over with a traditional or warm sendover date stamp, it is not counted in this version of the query
+
+
+  SELECT
   DISTINCT 
   
   lead.marketing_data_attribution__c AS md_id,
@@ -21,7 +23,7 @@ SELECT
   opportunity.name as opportunity_name,
   ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
   CASE
-    when Lead.marketing_data_attribution__c is not null then 1
+    when Lead.marketing_data_attribution__c is not null AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1
     else null
   end AS is_first_sendover,
   CASE
@@ -30,6 +32,7 @@ SELECT
     AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1
     else null
   end AS is_mktg_first_sendover,
+  CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_pci_first_sendover,
   account.effect__c as account_patient_diagnosis,
   account.type_of_mesothelioma__c as account_diagnosis_details,
   account.status__c as account_status,
