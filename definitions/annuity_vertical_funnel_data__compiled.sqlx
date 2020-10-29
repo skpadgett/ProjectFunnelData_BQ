@@ -9,7 +9,7 @@ config {
 * Learn more on https://docs.dataform.co/guides/datasets
 
 */
--- Joins Lead & QL data together for all 3 datasets: secondary annuity, mortgage note, and primary annuity
+-- Joins Lead , MQL, and QL data together for all 3 datasets: secondary annuity, mortgage note, and primary annuity
 with final_data AS (
   SELECT
     DISTINCT A.md_id, 
@@ -34,12 +34,12 @@ with final_data AS (
     A.raw_leads as is_raw_lead,
     B.qualified_leads as is_qualified_lead,
     B.qualified_date,
-    C.preqls as is_preql,
+    C.is_marketing_qualified_lead,
     A.business_partner
   FROM
     ${ref("annuity_secondary_funnel_data__leads")} as A
     LEFT JOIN ${ref("annuity_secondary_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
-    LEFT JOIN ${ref("annuity_secondary_funnel_data__preql")} as C on A.lead_id = C.lead_id
+    LEFT JOIN ${ref("annuity_secondary_funnel_data__marketing_qualified_leads")} as C on A.lead_id = C.lead_id
   UNION ALL
   SELECT
     DISTINCT A.md_id,
@@ -64,7 +64,7 @@ with final_data AS (
     A.raw_leads as is_raw_lead,
     B.qualified_leads as is_qualified_lead,
     B.qualified_date,
-    null :: int as is_preql,
+    null :: int as is_marketing_qualified_lead,
     A.business_partner
   FROM
     ${ref("mortgage_note_funnel_data__leads")} as A
@@ -93,11 +93,11 @@ with final_data AS (
     A.raw_leads as is_raw_lead,
     null :: int as is_qualified_lead,
     null :: date as qualified_date,
-    null :: int as is_preql,
+    B.is_marketing_qualified_lead,
     A.business_partner 
   FROM
     ${ref("annuity_primary_funnel_data__leads")} as A
-    -- LEFT JOIN apm_qualified_leads as B on A.lead_id = B.lead_id
+LEFT JOIN ${ref("annuity_primary_funnel__marketing_qualified_leads")} as B on A.md_id = B.md_id
 )
 -- select and modify final data
 SELECT
@@ -134,6 +134,6 @@ SELECT
   coalesce(is_lead,0)::int2 as is_lead,
   coalesce(is_raw_lead,0)::int2 as is_raw_lead,
   coalesce(is_qualified_lead,0)::int2 as is_qualified_lead,
-coalesce(is_preql,0)::int2 as is_preql
+coalesce(is_marketing_qualified_lead,0)::int2 as is_marketing_qualified_lead
  
             FROM final_data
