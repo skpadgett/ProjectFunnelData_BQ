@@ -37,7 +37,8 @@ SELECT
     WHEN true THEN 'Paid'
     ELSE 'Organic'
   END as paid,
-  marketing_data__c.cause__c as cause,
+  marketing_data__c.campaign_id__c as cause,
+  --note that campaign_id is our internal field while cause__c is what we get back from the partner. Cause has uncleaned names and data
   marketing_data__c.lead_type__c as lead_type,
   marketing_data__c.marketing_channels__c as marketing_channels,
   marketing_data__c.traffic_source__c as traffic_source,
