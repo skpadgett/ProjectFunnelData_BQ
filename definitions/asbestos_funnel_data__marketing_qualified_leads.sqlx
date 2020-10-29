@@ -46,4 +46,4 @@ config { type: "view" }
       ( mds.md_effect ILIKE '%Mesothelioma%'  
       and ((marketing_data__c.lead_type__c = 'Form' )
       or marketing_data__c.lead_type__c is null)))
-
+--Data for MQL KPI starts 09-21-2020 for Chat leads and 09-28-2020 for Phone leads. FB Lead Ads are not currently included.
