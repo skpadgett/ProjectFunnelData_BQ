@@ -59,17 +59,17 @@ WHERE
   AND marketing_data__c.isdeleted is false
   AND (
     (
-      "marketing_data__c"."heirial_click_path_page__c" NOT ILIKE '%writers%'
+      "marketing_data__c"."micro_click_path__c" NOT ILIKE '%writers%'
     )
     or (
-      "marketing_data__c"."heirial_click_path_page__c" is null
+      "marketing_data__c"."micro_click_path__c" is null
     )
   )
   AND (
     (
-      "marketing_data__c"."conversion_page__c" NOT ILIKE '%writers%'
+      "marketing_data__c"."micro_conv_page__c" NOT ILIKE '%writers%'
     )
-    or ("marketing_data__c"."conversion_page__c" is null)
+    or ("marketing_data__c"."micro_conv_page__c" is null)
   )
   and (
     marketing_data__c.website__c ILIKE '%drugwatch%'
