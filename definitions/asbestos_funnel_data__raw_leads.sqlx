@@ -19,7 +19,7 @@ config { type: "view" }
     mds.lead_type,
     lead.createddate as lead_createddatetime,
     CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_raw_lead,
-    CASE WHEN mds.test_or_spam is false and ((marketing_data__c.sales_process__c != 'Medical Outreach') or (marketing_data__c.sales_process__c is null)) then 1 else null end as is_pa_lead,
+    CASE WHEN mds.test_or_spam is false and ((marketing_data__c.marketing_channels__c = 'Sales' and marketing_data__c.sales_process__c != 'Medical Outreach') or (marketing_data__c.marketing_channels__c = 'Sales' and  marketing_data__c.sales_process__c is null) or (marketing_data__c.marketing_channels__c != 'Sales')) then 1 else null end as is_pa_lead,
     CASE when lead.lead_status__c not in ('New','Unreached', 'Unable to Reach') then 1 else null end as is_reached_lead,
     CASE when lead.lead_status__c in ('New','Unreached', 'Unable to Reach') then 1 else null end as is_unreached_lead,
     CASE when ((lead.effect__c ilike '%Mesothelioma%') or (mds.lead_type = 'FB Lead Ad')) then 1 else null end as is_pa_meso_form_lead,
