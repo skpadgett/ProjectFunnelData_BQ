@@ -20,7 +20,13 @@ with customers_setup as (
         ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
     COALESCE(Opportunity.signing_value_override__c,Opportunity.signing_value__c) as signing_value, 
         case when opportunity.signing_value__c is not null then 1 else 0 end as is_customer,
-        Opportunity.stage_signed_date_time__c as opportunity_signeddatetime
+        Opportunity.stage_signed_date_time__c as opportunity_signeddatetime,
+        account.effect__c as account_patient_diagnosis,
+        account.type_of_mesothelioma__c as account_diagnosis_details,
+        account.status__c as account_status,
+        account.sub_status__c as account_sub_status,
+        opportunity.status__c as opportunity_status,
+        opportunity.sub_status__c as opportunity_sub_status
     FROM 
         lt_pa_salesforce.account AS Account
         INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
@@ -48,9 +54,16 @@ with customers_setup as (
      case when signing_value in (0.25, 1) and account_effect = 'Mesothelioma' then 1 else 0 end as is_mktg_customer,
   		opportunity_signeddatetime,
         opportunity_name,
-        opportunity_law_firm
+        opportunity_law_firm,
+        account_patient_diagnosis,
+        account_diagnosis_details,
+        account_status,
+        account_sub_status,
+        opportunity_status,
+        opportunity_sub_status
 
     FROM
         customers_setup
     WHERE
         signing_value > 0 
+
