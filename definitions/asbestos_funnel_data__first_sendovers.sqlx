@@ -22,6 +22,7 @@ config {
   opportunity.id as opportunity_id,
   opportunity.name as opportunity_name,
   ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
+  ${lead_account_ownerids.ownerid("opportunity.ownerid")} as opportunity_owner,
   CASE
     when Lead.marketing_data_attribution__c is not null AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1
     else null

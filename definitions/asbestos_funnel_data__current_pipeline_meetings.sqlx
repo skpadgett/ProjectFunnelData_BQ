@@ -17,6 +17,7 @@ SELECT
   opportunity.id as opportunity_id,
   opportunity.name as opportunity_name,
   ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
+  ${lead_account_ownerids.ownerid("opportunity.ownerid")} as opportunity_owner,
   account.effect__c as account_patient_diagnosis,
   account.type_of_mesothelioma__c as account_diagnosis_details,
   account.status__c as account_status,
