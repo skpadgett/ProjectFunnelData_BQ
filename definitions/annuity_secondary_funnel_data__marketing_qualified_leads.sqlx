@@ -12,7 +12,7 @@ annuity_leads.website,
 marketing_data__c.type_of_payment__c as type_of_payment,
 annuity_leads.lead_type,
 marketing_data__c.key_presses__c as key_presses,
-annuity_leads.microanalytics_id,
+marketing_data__c.micro_session_id__c as microanalytics_id,
 annuity_leads.lead_created_date
 
 from 
@@ -25,14 +25,18 @@ where
                                                       ))
         OR (marketing_data__c.lead_type__c = 'Form'
             AND marketing_data__c.website__c = 'structuredsettlements.com'))
-       OR ((marketing_data__c.lead_type__c = 'Phone'
+       OR (marketing_data__c.lead_type__c = 'Phone'
             AND marketing_data__c.key_presses__c = '[1]')
+           /* This OR statement was removed after IVR launch on structuredsettlements.com per Steve Laclair 
            OR (marketing_data__c.lead_type__c = 'Phone'
-               AND marketing_data__c.website__c = 'structuredsettlements.com')))
-  AND ((annuity_leads.microanalytics_id IS NOT NULL)
+            AND marketing_data__c.website__c = 'structuredsettlements.com') */
+            )
+  AND ((marketing_data__c.micro_session_id__c IS NOT NULL)
        OR (marketing_data__c.key_presses__c = '[1]'))
-       -- PER STEVE LACLAIR, JUN 17 2020 IS WHEN IVR KEYPRESS WENT INTO EFFECT. WE CANNOT ACCURATELY MEASURE THIS KPI IN TERMS OF PHONE LEADS/IVR KEYPRESS PRIOR TO THIS DATE
-       AND annuity_leads.lead_created_date >= '2020-06-17'
-       AND marketing_data__c.test_or_spam__c is false
+        AND marketing_data__c.test_or_spam__c is false
        AND lead.test_or_spam__c is false
        
+       -- PER STEVE LACLAIR, JUN 17 2020 IS WHEN IVR KEYPRESS WENT INTO EFFECT. WE CANNOT ACCURATELY MEASURE THIS KPI IN TERMS OF PHONE LEADS/IVR KEYPRESS PRIOR TO THIS DATE. We removed this date restrictor in November when we backfilled the 'is_mql' field
+      -- AND annuity_leads.lead_created_date >= '2020-06-17'
+      
+
