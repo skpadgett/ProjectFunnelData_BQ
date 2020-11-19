@@ -35,69 +35,69 @@ SELECT
   opportunity.meeting_happened_date__c as all_meeting_happeneddatetime,
   max(
     case
-      when status_history__c.status__c = 'Meeting' then '1'
+      when status_history__c.status__c = 'Meeting' then 1
       else null
     end
   ) as meeting_history,
   max(
     case
       when status_history__c.status__c = 'Meeting'
-      and status_history__c.sub_status__c = 'Client Cancelled' then '1'
+      and status_history__c.sub_status__c = 'Client Cancelled' then 1
       else null
     end
   ) as had_meeting_client_cancelled,
   max(
     case
       when status_history__c.status__c = 'Meeting'
-      and status_history__c.sub_status__c = 'Law Firm Cancelled' then '1'
+      and status_history__c.sub_status__c = 'Law Firm Cancelled' then 1
       else null
     end
   ) as had_meeting_law_firm_cancelled,
   max(
     case
       when status_history__c.status__c = 'Meeting'
-      and status_history__c.sub_status__c = 'Meeting Happened' then '1'
+      and status_history__c.sub_status__c = 'Meeting Happened' then 1
       else null
     end
   ) as had_meeting_happened,
   max(
     case
       when status_history__c.status__c = 'Meeting'
-      and status_history__c.sub_status__c = 'Rescheduled' then '1'
+      and status_history__c.sub_status__c = 'Rescheduled' then 1
       else null
     end
   ) as had_meeting_rescheduled,
   max(
     case
       when status_history__c.status__c = 'Meeting'
-      and status_history__c.sub_status__c = 'Scheduled' then '1'
+      and status_history__c.sub_status__c = 'Scheduled' then 1
       else null
     end
   ) as had_meeting_scheduled,
   max(
     case
-      when status_history__c.status__c = 'Send Over' then '1'
+      when status_history__c.status__c = 'Send Over' then 1
       else null
     end
   ) as sendover_history,
   max(
     case
       when status_history__c.status__c = 'Send Over'
-      and status_history__c.sub_status__c = 'Investigator Tool' then '1'
+      and status_history__c.sub_status__c = 'Investigator Tool' then 1
       else null
     end
   ) as had_sendover_investigator_tool,
   max(
     case
       when status_history__c.status__c = 'Send Over'
-      and status_history__c.sub_status__c = 'Potential Call-In' then '1'
+      and status_history__c.sub_status__c = 'Potential Call-In' then 1
       else null
     end
   ) as had_sendover_potential_call_in,
   max(
     case
       when status_history__c.status__c = 'Send Over'
-      and status_history__c.sub_status__c = 'Traditional' then '1'
+      and status_history__c.sub_status__c = 'Traditional' then 1
       else null
     end
   ) as had_sendover_traditional,
@@ -110,7 +110,7 @@ SELECT
   ) as had_sendover_warm_transfer,
 max(
     case
-      when status_history__c.status__c = 'Appointment Happened' then '1'
+      when status_history__c.status__c = 'Appointment Happened' then 1
       else null
     end
   ) as appointment_happened_history,
@@ -130,13 +130,13 @@ max(
   ) as had_appointment_happened_phone_visit,
 max(
     case
-      when status_history__c.status__c = 'Appointment Scheduled' then '1'
+      when status_history__c.status__c = 'Appointment Scheduled' then 1
       else null
     end
   ) as appointment_scheduled_history,
   max(
     case
-      when status_history__c.status__c = 'Medical Send Over' then '1'
+      when status_history__c.status__c = 'Medical Send Over' then 1
       else null
     end
   ) as medical_sendover_history,
