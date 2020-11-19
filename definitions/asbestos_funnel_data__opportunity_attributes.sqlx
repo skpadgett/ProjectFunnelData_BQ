@@ -1,0 +1,200 @@
+
+
+config {
+  type: "view"
+}
+
+SELECT
+  DISTINCT lead.marketing_data_attribution__c AS md_id,
+  lead.id as lead_id,
+  account.id as account_id,
+  opportunity.id as opportunity_id,
+  case
+    when opportunity.recordtypeid = '0121C000001Yv6NQAS' then 'Medical Referral'
+    when opportunity.recordtypeid = '01215000001YnbzAAC' then 'Asbestos'
+    when opportunity.recordtypeid = '0121C000001UjlwQAC' then 'Asbestos Locked'
+    else opportunity.recordtypeid
+  end as opportunity_record_type,
+  opportunity.createddate as opportunity_created_date_time,
+  opportunity.name as opportunity_name,
+  ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
+  case when opportunity.medical_facility__c is not null then medical_facility_accounts.name else null end as opportunity_medical_facility,
+  ${lead_account_ownerids.ownerid("opportunity.ownerid")} as opportunity_owner,
+  account.effect__c as account_patient_diagnosis,
+  account.type_of_mesothelioma__c as account_diagnosis_details,
+  account.status__c as account_status,
+  account.sub_status__c as account_sub_status,
+  opportunity.status__c as opportunity_status,
+  opportunity.sub_status__c as opportunity_sub_status,
+  opportunity.meeting_type__c as opportunity_meeting_type,
+  opportunity.signed_without_a_meeting__c as opportunity_signed_without_meeting,
+  Opportunity.stage_sendover_date_time__c as all_traditional_sendoverdatetime,
+  opportunity.stage_potential_call_in_date_time__c as all_pcidatetime,
+  opportunity.stage_warm_sendover_date_time__c as all_warm_transferdatetime,
+  Opportunity.meeting_scheduled_date__c as all_meeting_scheduleddatetime,
+  opportunity.meeting_happened_date__c as all_meeting_happeneddatetime,
+  max(
+    case
+      when status_history__c.status__c = 'Meeting' then '1'
+      else null
+    end
+  ) as meeting_history,
+  max(
+    case
+      when status_history__c.status__c = 'Meeting'
+      and status_history__c.sub_status__c = 'Client Cancelled' then '1'
+      else null
+    end
+  ) as had_meeting_client_cancelled,
+  max(
+    case
+      when status_history__c.status__c = 'Meeting'
+      and status_history__c.sub_status__c = 'Law Firm Cancelled' then '1'
+      else null
+    end
+  ) as had_meeting_law_firm_cancelled,
+  max(
+    case
+      when status_history__c.status__c = 'Meeting'
+      and status_history__c.sub_status__c = 'Meeting Happened' then '1'
+      else null
+    end
+  ) as had_meeting_happened,
+  max(
+    case
+      when status_history__c.status__c = 'Meeting'
+      and status_history__c.sub_status__c = 'Rescheduled' then '1'
+      else null
+    end
+  ) as had_meeting_rescheduled,
+  max(
+    case
+      when status_history__c.status__c = 'Meeting'
+      and status_history__c.sub_status__c = 'Scheduled' then '1'
+      else null
+    end
+  ) as had_meeting_scheduled,
+  max(
+    case
+      when status_history__c.status__c = 'Send Over' then '1'
+      else null
+    end
+  ) as sendover_history,
+  max(
+    case
+      when status_history__c.status__c = 'Send Over'
+      and status_history__c.sub_status__c = 'Investigator Tool' then '1'
+      else null
+    end
+  ) as had_sendover_investigator_tool,
+  max(
+    case
+      when status_history__c.status__c = 'Send Over'
+      and status_history__c.sub_status__c = 'Potential Call-In' then '1'
+      else null
+    end
+  ) as had_sendover_potential_call_in,
+  max(
+    case
+      when status_history__c.status__c = 'Send Over'
+      and status_history__c.sub_status__c = 'Traditional' then '1'
+      else null
+    end
+  ) as had_sendover_traditional,
+  max(
+    case
+      when status_history__c.status__c = 'Send Over'
+      and status_history__c.sub_status__c = 'Warm Transfer' then 1
+      else null
+    end
+  ) as had_sendover_warm_transfer,
+max(
+    case
+      when status_history__c.status__c = 'Appointment Happened' then '1'
+      else null
+    end
+  ) as appointment_happened_history,
+   max(
+    case
+      when status_history__c.status__c = 'Appointment Happened'
+      and status_history__c.sub_status__c = 'In-person Visit' then 1
+      else null
+    end
+  ) as had_appointment_happened_in_person_visit,
+  max(
+    case
+      when status_history__c.status__c = 'Appointment Happened'
+      and status_history__c.sub_status__c = 'Phone/Telehealth' then 1
+      else null
+    end
+  ) as had_appointment_happened_phone_visit,
+max(
+    case
+      when status_history__c.status__c = 'Appointment Scheduled' then '1'
+      else null
+    end
+  ) as appointment_scheduled_history,
+  max(
+    case
+      when status_history__c.status__c = 'Medical Send Over' then '1'
+      else null
+    end
+  ) as medical_sendover_history,
+    max(
+    case
+      when status_history__c.status__c = 'Medical Send Over'
+      and status_history__c.sub_status__c = 'Referral' then 1
+      else null
+    end
+  ) as had_medical_sendover_referral,
+     max(
+    case
+      when status_history__c.status__c = 'Medical Send Over'
+      and status_history__c.sub_status__c = 'Scheduling' then 1
+      else null
+    end
+  ) as had_medical_sendover_scheduled
+
+
+
+
+
+
+
+FROM
+  lt_pa_salesforce.opportunity as Opportunity
+  inner join lt_pa_salesforce.account AS Account ON account.id = opportunity.accountid
+  INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+  INNER JOIN ${ref("asbestos_funnel_data__raw_mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
+  left join lt_pa_salesforce.status_history__c on Opportunity.id = status_history__c.opportunity__c
+  left join lt_pa_salesforce.account as medical_facility_accounts on opportunity.medical_facility__c = medical_facility_accounts.id 
+WHERE
+  lead.isdeleted is false
+  and account.isdeleted is false
+  and opportunity.isdeleted is false
+group by
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23
+order by
+  4 desc
