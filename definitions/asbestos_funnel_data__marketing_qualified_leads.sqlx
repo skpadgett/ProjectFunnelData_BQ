@@ -13,6 +13,7 @@ config { type: "view" }
         lead.marketing_data_attribution__c AS md_id,
         lead.id as lead_id,
         lead.createddate as lead_createddatetime,
+        mds.md_createddatetime,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_marketing_qualified_lead,
         marketing_data__c.lead_type__c,
         marketing_data__c.effect__c,
