@@ -13,7 +13,8 @@ marketing_data__c.type_of_payment__c as type_of_payment,
 annuity_leads.lead_type,
 marketing_data__c.key_presses__c as key_presses,
 marketing_data__c.micro_session_id__c as microanalytics_id,
-annuity_leads.lead_created_date
+annuity_leads.lead_created_date,
+marketing_data__c.createddate as md_created_date
 
 from 
 ${ref("annuity_secondary_funnel_data__leads")} as annuity_leads
