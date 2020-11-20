@@ -93,7 +93,7 @@ COALESCE(O.mktg_signing_value,0)::decimal(4,2) AS mktg_signing_value,
 COALESCE(O.all_signing_value,0)::decimal(4,2) AS all_signing_value,
 -- the following columns requre de-duping because it's possible to have multiple opps associated with an account. This was causing duplication in aggregations using data from this table.
 COALESCE(max(I.is_all_sendover),0)::int2 as is_all_sendover,
-COALESCE(max(I.is_mktg_all_sendover),0)::int2 as is_mktg_all__sendover,
+COALESCE(max(I.is_mktg_all_sendover),0)::int2 as is_mktg_all_sendover,
 COALESCE(max(L.is_all_meeting_scheduled),0)::int2 as is_all_meeting_scheduled,
 COALESCE(max(L.is_mktg_all_meeting_scheduled),0)::int2 as is_mktg_all_meeting_scheduled
 
