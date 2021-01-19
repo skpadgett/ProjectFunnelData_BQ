@@ -31,7 +31,9 @@ config { type: "view" }
         account.out_of_sol_override__c as account_out_of_sol_override,
         account.is_sql__c as account_is_sql,
         account.sql_date__c as account_sql_datetime,
-        account.disqualified_reasons__c as account_disqualified_reasons
+        account.disqualified_reasons__c as account_disqualified_reasons,
+        account.name as account_name
+    
 
 
     FROM
