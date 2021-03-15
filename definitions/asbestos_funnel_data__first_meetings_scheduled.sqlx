@@ -12,8 +12,8 @@ config { type: "view" }
          account.id as account_id,
          min(Opportunity.meeting_scheduled_date__c) as first_meeting_scheduled_date
          from 
-           lt_pa_salesforce.account 
-           INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
+           lt_pa_salesforce.Account 
+           INNER JOIN lt_pa_salesforce.Opportunity as opportunity ON account.id = opportunity.accountid
     WHERE 
 Opportunity.meeting_scheduled_date__c IS not null  
 group by 1
@@ -35,15 +35,15 @@ group by 1
         opportunity.sub_status__c as opportunity_sub_status,
         opportunity.meeting_type__c as opportunity_meeting_type,
      CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_first_meeting_scheduled,
-     CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ilike '%mesothelioma%' then 1 else null end AS is_mktg_first_meeting_scheduled,
+     CASE when Lead.marketing_data_attribution__c is not null and LOWER(account.effect__c) like '%mesothelioma%' then 1 else null end AS is_mktg_first_meeting_scheduled,
 first_meeting_date.first_meeting_scheduled_date as first_meeting_scheduleddatetime
 
     FROM 
     first_meeting_date
-       inner join lt_pa_salesforce.account AS Account on first_meeting_date.account_id = account.id
-        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+       inner join lt_pa_salesforce.Account AS account on first_meeting_date.account_id = account.id
+        INNER JOIN lt_pa_salesforce.Lead AS lead ON account.lead_attribution__c = lead.id
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
-        INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid and first_meeting_date.first_meeting_scheduled_date = opportunity.meeting_scheduled_date__c
+        INNER JOIN lt_pa_salesforce.Opportunity as opportunity ON account.id = opportunity.accountid and first_meeting_date.first_meeting_scheduled_date = opportunity.meeting_scheduled_date__c
     WHERE 
 Opportunity.meeting_scheduled_date__c IS not null  
        

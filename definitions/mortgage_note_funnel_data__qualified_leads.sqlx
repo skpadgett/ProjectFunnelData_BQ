@@ -20,7 +20,7 @@ with mnote_qualified_leads_paid AS (
       ELSE null
     END AS qualified_leads
   FROM
-    lt_pa_salesforce.lead
+    lt_pa_salesforce.Lead
     INNER JOIN ${ref("mortgage_note_funnel_data__leads")} as mnote_leads ON lead.id = mnote_leads.lead_id
   WHERE
     lead.md_vertical__c IN ('MNote', 'Annuity')
@@ -39,7 +39,7 @@ SELECT
     ELSE null
   END AS qualified_leads
 FROM
-  lt_pa_salesforce.lead
+  lt_pa_salesforce.Lead
   INNER JOIN ${ref("mortgage_note_funnel_data__leads")} as mnote_leads ON lead.id = mnote_leads.lead_id
 WHERE
   lead.md_vertical__c IN ('MNote', 'Annuity')

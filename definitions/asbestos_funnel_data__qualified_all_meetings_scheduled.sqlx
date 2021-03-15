@@ -20,23 +20,23 @@ config { type: "view" }
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_qualified_all_meeting_scheduled,
  Opportunity.meeting_scheduled_date__c as qualified_all_meeting_scheduleddatetime
     FROM 
-        lt_pa_salesforce.account AS Account
-        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        lt_pa_salesforce.Account AS account
+        INNER JOIN lt_pa_salesforce.Lead AS lead ON account.lead_attribution__c = lead.id
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
-        INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
+        INNER JOIN lt_pa_salesforce.Opportunity as Opportunity ON account.id = opportunity.accountid
     WHERE 
 Opportunity.meeting_scheduled_date__c IS not null  
-        AND Account.effect__c ILIKE '%Mesothelioma%' 
+        AND LOWER(Account.effect__c) LIKE '%mesothelioma%' 
         AND Account.within_statute_of_limitations__c = 'Yes'
 
-        AND (("Account"."u_s_exposure__c" IN ('Yes')
+        AND ((Account.u_s_exposure__c IN ('Yes')
 		and account.country_of_exposure__c is null)
 	   
 		or
-		("Account"."u_s_exposure__c" is null
+		(Account.u_s_exposure__c is null
 	   and account.country_of_exposure__c in ('United States of America'))
 	   or 
-		("Account"."u_s_exposure__c" IN ('Yes')
+		(Account.u_s_exposure__c IN ('Yes')
 			and account.country_of_exposure__c in ('United States of America')))
 
 

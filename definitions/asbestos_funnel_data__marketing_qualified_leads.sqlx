@@ -25,12 +25,12 @@ config { type: "view" }
 
 
     FROM
-        lt_pa_salesforce.lead AS Lead  
+        lt_pa_salesforce.Lead AS lead  
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON Lead.marketing_data_attribution__c = mds.md_id
-        inner join lt_pa_salesforce.marketing_data__c on mds.md_id = marketing_data__c.id
-        full outer join lt__invoca.transactions on marketing_data__c.call_id__c = transactions.transaction_id
+        inner join lt_pa_salesforce.Marketing_Data__c on mds.md_id = marketing_data__c.id
+        full outer join lt__invoca.Transactions on marketing_data__c.call_id__c = transactions.transaction_id
     WHERE
-        Lead.test_or_spam__c IS FALSE         
+        lead.test_or_spam__c IS FALSE         
         
         AND mds.marketing_channels != 'Sales'
   and lead.isdeleted is false
@@ -39,12 +39,12 @@ config { type: "view" }
   and (
       (marketing_data__c.lead_type__c = 'Phone'
       and transactions.keypresses = '[1]' 
-      and transactions.signal_name ILIKE '%Mesothelioma%')
+      and LOWER(transactions.signal_name) LIKE '%mesothelioma%')
       or 
       (marketing_data__c.lead_type__c = 'Chat'
-      and marketing_data__c.chat_topic_answer__c ilike '%Mesothelioma%') 
+      and LOWER(marketing_data__c.chat_topic_answer__c) like '%mesothelioma%') 
       or 
-      ( mds.md_effect ILIKE '%Mesothelioma%'  
+      ( LOWER(mds.md_effect) LIKE '%mesothelioma%'  
       and ((marketing_data__c.lead_type__c = 'Form' )
       or marketing_data__c.lead_type__c is null)))
 --Data for MQL KPI starts 09-21-2020 for Chat leads and 09-28-2020 for Phone leads. FB Lead Ads are not currently included.

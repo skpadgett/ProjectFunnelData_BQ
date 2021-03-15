@@ -32,10 +32,10 @@ config { type: "view" }
         CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_lead
  
     FROM
-        lt_pa_salesforce.lead AS Lead 
+        lt_pa_salesforce.Lead AS lead 
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds on Lead.marketing_data_attribution__c = mds.md_id
     WHERE
-        Lead.test_or_spam__c IS FALSE  
+        lead.test_or_spam__c IS FALSE  
         -- note: there are nulls in marketing_channels prior to 2017, but we are excluding them by design-- we have no way of knowing what channel they are from and are not supporting data prior to 2017      
         AND mds.marketing_channels != 'Sales'
   and lead.isdeleted is false

@@ -29,7 +29,7 @@ SELECT
     WHEN 'bing' THEN 'Bing'
     WHEN 'facebook' THEN 'Facebook'
     ELSE marketing_data__c.utm_source__c
-  end AS source,
+  end AS utm_source,
   lower(marketing_data__c.website__c) as website,
   marketing_data__c.vertical__c as vertical,
   CASE
@@ -48,32 +48,28 @@ SELECT
     WHEN Lead.marketing_data_attribution__c IS not null THEN 1
     ELSE null
   END AS leads,
-  case when lower(marketing_data__c.micro_device__c) in ('android', 'iphone') then 'mobile' when lower(marketing_data__c.micro_device__c) in ('ipad') then 'tablet' when lower(marketing_data__c.micro_device__c) is null then null else lower(marketing_data__c.micro_device__c) end as device
+  case when LOWER(marketing_data__c.micro_device__c) in ('android', 'iphone') then 'mobile' when LOWER(marketing_data__c.micro_device__c) in ('ipad') then 'tablet' when lower(marketing_data__c.micro_device__c) is null then null else lower(marketing_data__c.micro_device__c) end as device
 FROM
-  lt_pa_salesforce.marketing_data__c
-  inner join lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c
+  lt_pa_salesforce.Marketing_Data__c
+  inner join lt_pa_salesforce.Lead on marketing_data__c.id = lead.marketing_data_attribution__c
 WHERE
   marketing_data__c.test_or_spam__c IS false
   AND lead.test_or_spam__c IS FALSE
   AND marketing_data__c.vertical__c in ('MT')
   AND marketing_data__c.isdeleted is false
   AND (
-    (
-      "marketing_data__c"."micro_click_path__c" NOT ILIKE '%writers%'
-    )
-    or (
-      "marketing_data__c"."micro_click_path__c" is null
-    )
-  )
-  AND (
-    (
-      "marketing_data__c"."micro_conv_page__c" NOT ILIKE '%writers%'
-    )
-    or ("marketing_data__c"."micro_conv_page__c" is null)
-  )
+        (LOWER(marketing_data__c.micro_click_path__c) NOT LIKE '%writers%'
+        )
+    or ( marketing_data__c.micro_click_path__c is null)
+      )
+  AND ((  
+      LOWER(marketing_data__c.micro_conv_page__c) NOT LIKE '%writers%'
+      )
+      or (marketing_data__c.micro_conv_page__c is null)
+      )
   and (
-    marketing_data__c.website__c ILIKE '%drugwatch%'
-    or marketing_data__c.website__c ILIKE '%rounduplawsuit%'
-    or marketing_data__c.website__c ILIKE '%consumernotice%'
-  )
+    LOWER(marketing_data__c.website__c) LIKE '%drugwatch%'
+    or LOWER(marketing_data__c.website__c) LIKE '%rounduplawsuit%'
+    or LOWER(marketing_data__c.website__c) LIKE '%consumernotice%'
+      )
   AND lead.isdeleted is false

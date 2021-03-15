@@ -7,34 +7,34 @@ annuity_leads.md_id,
 annuity_leads.lead_id,
 annuity_leads.vertical,
 case when annuity_leads.lead_id is not null then 1 else null end as is_marketing_qualified_lead,
-Marketing_Data_c.is_mql__c,
+Marketing_Data__c.is_mql__c,
 annuity_leads.website,
-Marketing_Data_c.type_of_payment__c as type_of_payment,
+Marketing_Data__c.type_of_payment__c as type_of_payment,
 annuity_leads.lead_type,
-Marketing_Data_c.key_presses__c as key_presses,
-Marketing_Data_c.micro_session_id__c as microanalytics_id,
+Marketing_Data__c.key_presses__c as key_presses,
+Marketing_Data__c.micro_session_id__c as microanalytics_id,
 annuity_leads.lead_created_date,
-Marketing_Data_c.createddate as md_created_date
+Marketing_Data__c.createddate as md_created_date
 
 from 
 ${ref("annuity_secondary_funnel_data__leads")} as annuity_leads
-inner join lt_pa_salesforce.Marketing_Data__c on annuity_leads.md_id = Marketing_Data_c.id
-inner join lt_pa_salesforce.Lead on Marketing_Data_c.id = Lead.marketing_data_attribution__c
+inner join lt_pa_salesforce.Marketing_Data__c on annuity_leads.md_id = Marketing_Data__c.id
+inner join lt_pa_salesforce.Lead on Marketing_Data__c.id = Lead.marketing_data_attribution__c
 where
-(((Marketing_Data_c.lead_type__c = 'Form'
-         AND Marketing_Data_c.type_of_payment__c IN ('Structured Settlement', 'structured_settlement', 'Single Premium Immediate Annuity', 'single_premium_immediate', 'Lottery Payments', 'lottery_payments'
+(((Marketing_Data__c.lead_type__c = 'Form'
+         AND Marketing_Data__c.type_of_payment__c IN ('Structured Settlement', 'structured_settlement', 'Single Premium Immediate Annuity', 'single_premium_immediate', 'Lottery Payments', 'lottery_payments'
                                                       ))
-        OR (Marketing_Data_c.lead_type__c = 'Form'
-            AND Marketing_Data_c.website__c = 'structuredsettlements.com'))
-       OR (Marketing_Data_c.lead_type__c = 'Phone'
-            AND Marketing_Data_c.key_presses__c = '[1]')
+        OR (Marketing_Data__c.lead_type__c = 'Form'
+            AND Marketing_Data__c.website__c = 'structuredsettlements.com'))
+       OR (Marketing_Data__c.lead_type__c = 'Phone'
+            AND Marketing_Data__c.key_presses__c = '[1]')
            /* This OR statement was removed after IVR launch on structuredsettlements.com per Steve Laclair 
-           OR (Marketing_Data_c.lead_type__c = 'Phone'
-            AND Marketing_Data_c.website__c = 'structuredsettlements.com') */
+           OR (Marketing_Data__c.lead_type__c = 'Phone'
+            AND Marketing_Data__c.website__c = 'structuredsettlements.com') */
             )
-  AND ((Marketing_Data_c.micro_session_id__c IS NOT NULL)
-       OR (Marketing_Data_c.key_presses__c = '[1]'))
-        AND Marketing_Data_c.test_or_spam__c is false
+  AND ((Marketing_Data__c.micro_session_id__c IS NOT NULL)
+       OR (Marketing_Data__c.key_presses__c = '[1]'))
+        AND Marketing_Data__c.test_or_spam__c is false
        AND Lead.test_or_spam__c is false
        
        -- PER STEVE LACLAIR, JUN 17 2020 IS WHEN IVR KEYPRESS WENT INTO EFFECT. WE CANNOT ACCURATELY MEASURE THIS KPI IN TERMS OF PHONE LEADS/IVR KEYPRESS PRIOR TO THIS DATE. We removed this date restrictor in November when we backfilled the 'is_mql' field

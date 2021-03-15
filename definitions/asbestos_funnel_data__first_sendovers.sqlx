@@ -24,12 +24,12 @@ config {
   ${law_firms.lawfirm("opportunity.law_firm_account__c")} as opportunity_law_firm,
   ${lead_account_ownerids.ownerid("opportunity.ownerid")} as opportunity_owner,
   CASE
-    when Lead.marketing_data_attribution__c is not null AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1
+    when Lead.marketing_data_attribution__c is not null AND opportunity.stage_sendover_date_time__c IS NOT NULL then 1
     else null
   end AS is_first_sendover,
   CASE
     when Lead.marketing_data_attribution__c is not null
-    and account.effect__c ilike '%mesothelioma%'
+    and LOWER(account.effect__c) like '%mesothelioma%'
     AND Opportunity.stage_sendover_date_time__c IS NOT NULL then 1
     else null
   end AS is_mktg_first_sendover,
@@ -44,16 +44,16 @@ config {
   opportunity.stage_potential_call_in_date_time__c as first_potential_call_indatetime,
   opportunity.stage_warm_sendover_date_time__c as first_warm_sendoverdatetime
 FROM
-  lt_pa_salesforce.account AS Account
-  INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+  lt_pa_salesforce.Account AS account
+  INNER JOIN lt_pa_salesforce.Lead AS lead ON account.lead_attribution__c = lead.id
   INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
-  INNER JOIN lt_pa_salesforce.opportunity AS Opportunity ON account.id = opportunity.accountid
+  INNER JOIN lt_pa_salesforce.Opportunity AS opportunity ON account.id = opportunity.accountid
 WHERE
-  Account.opportunity__c IS NOT NULL
-  AND Opportunity.is_first_sent_over_opportunity__c IS TRUE
+  account.opportunity__c IS NOT NULL
+  AND opportunity.is_first_sent_over_opportunity__c IS TRUE
   and (
     (
-      Opportunity.stage_sendover_date_time__c is not null
+      opportunity.stage_sendover_date_time__c is not null
     )
     or (
       opportunity.stage_potential_call_in_date_time__c is not null

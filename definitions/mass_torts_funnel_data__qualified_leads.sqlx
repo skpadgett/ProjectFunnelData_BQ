@@ -11,22 +11,22 @@ config { type: "view" }
 with weitz_qls AS (
 -- gets qualified leads information for weitz. partner_opportunity__c.retainer_out_date__c is used to determine leads' qualified date.  
     SELECT DISTINCT
-      partner_opportunity__c."marketing_data__c" AS md_id,
-      partner_opportunity__c."retainer_out_date__c" qualified_date,
+      partner_opportunity__c.marketing_data__c AS md_id,
+      partner_opportunity__c.retainer_out_date__c qualified_date,
   case when partner_opportunity__c.marketing_data__c is not null then 1 else null end as qualified_leads
-FROM "lt_pa_salesforce"."partner_opportunity__c"
+FROM lt_pa_salesforce.Partner_Opportunity__c
   inner join ${ref("mass_torts_funnel_data__leads")} as drugwatch_leads on partner_opportunity__c.marketing_data__c = drugwatch_leads.md_id
-WHERE (partner_opportunity__c."retainer_out_date__c" AT TIME ZONE 'UTC') is not null
+WHERE (partner_opportunity__c.retainer_out_date__c) is not null
         ),
     other_qls AS (
  -- gets qualified leads information for non-weitz qualified leads. lead.prospective_date__c is used to determine qualified date. Levin not included.   
     SELECT DISTINCT
       lead.marketing_data_attribution__c as md_id,
-    lead."prospective_date__c" as qualified_date,
+    lead.prospective_date__c as qualified_date,
       case when lead.marketing_data_attribution__c is not null then 1 else null end as qualified_leads
-FROM "lt_pa_salesforce"."lead" 
+FROM lt_pa_salesforce.Lead 
 inner join ${ref("mass_torts_funnel_data__leads")} as drugwatch_leads on lead.marketing_data_attribution__c = drugwatch_leads.md_id
-WHERE (lead."prospective_date__c" AT TIME ZONE 'UTC') is not null
+WHERE (lead.prospective_date__c ) is not null
 
        )
 -- Joins drugwatch QLs into one dataset for use in final data          

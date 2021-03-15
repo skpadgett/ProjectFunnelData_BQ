@@ -18,7 +18,7 @@ config {
         account.id as account_id,
         account.createddate as account_createddatetime,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_sales_qualified_lead,
-        CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ILIKE '%mesothelioma%' then 1 else null end AS is_mktg_sales_qualified_lead,
+        CASE when Lead.marketing_data_attribution__c is not null and LOWER(account.effect__c) LIKE '%mesothelioma%' then 1 else null end AS is_mktg_sales_qualified_lead,
         account.effect__c as account_patient_diagnosis,
         account.type_of_mesothelioma__c as account_diagnosis_details,
         account.country_of_exposure__c as account_country_of_exposure,
@@ -32,8 +32,8 @@ config {
         account.disqualified_reasons__c as account_disqualified_reasons
        
     FROM
-        lt_pa_salesforce.account AS Account
-        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        lt_pa_salesforce.Account AS Account
+        INNER JOIN lt_pa_salesforce.Lead AS Lead ON account.lead_attribution__c = lead.id
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
     WHERE 
     account.is_sql__c is true

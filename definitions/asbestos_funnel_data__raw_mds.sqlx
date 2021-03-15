@@ -9,17 +9,17 @@
 config { type: "view" }
 
      SELECT DISTINCT 
-        "Marketing Data C".id AS md_id,
-        "Marketing Data C".test_or_spam__c as test_or_spam,
+        MarketingData_C.id AS md_id,
+        MarketingData_C.test_or_spam__c as test_or_spam,
         redis_id__c as redis_id,
         createddate AS md_createddatetime,
         CASE when id is not null then 1 else null end AS is_md,
-        "Marketing Data C".adwords_campaign__c AS ads_campaign,
-        "Marketing Data C".adwords_adgroup__c as ads_adgroup,
-        "Marketing Data C".keyword_id__c as ads_keyword,
-        "Marketing Data C".adwords_creative__c as ads_creative,
-  "Marketing Data C".website__c as website,
-        CASE "Marketing Data C".utm_source__c
+        MarketingData_C.adwords_campaign__c AS ads_campaign,
+        MarketingData_C.adwords_adgroup__c as ads_adgroup,
+        MarketingData_C.keyword_id__c as ads_keyword,
+        MarketingData_C.adwords_creative__c as ads_creative,
+  MarketingData_C.website__c as website,
+        CASE MarketingData_C.utm_source__c
             WHEN 'google' THEN 'Adwords'
             WHEN 'adwords' THEN 'Adwords'
             WHEN 'bing' THEN 'Bing'
@@ -27,28 +27,28 @@ config { type: "view" }
   			WHEN 'yahoo' THEN 'Gemini'
  			WHEN 'quora' THEN 'Quora'
             WHEN 'steelhouse' THEN 'Steelhouse'
-        ELSE "Marketing Data C".utm_source__c end AS utm_source,
-        "Marketing Data C".marketing_channels__c as marketing_channels,
- "Marketing Data C".lead_type__c as lead_type,
- "Marketing Data C".effect__c as md_effect,
- "Marketing Data C".traffic_source__c as traffic_source,
- case when "Marketing Data C".marketing_channels__c = 'Paid' then 'Paid' else 'Organic' end as paid,
- "Marketing Data C".vertical__c as vertical,
- "Marketing Data C".invoca_promo_description__c as invoca_promo_description,
- "Marketing Data C".campaign_name__c as invoca_campaign,
-  case when "Marketing Data C".campaign_name__c = 'Print' then to_date("Marketing Data C".utm_content__c, 'MM-YYYY') else null end as traditional_publication_date,
+        ELSE MarketingData_C.utm_source__c end AS utm_source,
+        MarketingData_C.marketing_channels__c as marketing_channels,
+ MarketingData_C.lead_type__c as lead_type,
+ MarketingData_C.effect__c as md_effect,
+ MarketingData_C.traffic_source__c as traffic_source,
+ case when MarketingData_C.marketing_channels__c = 'Paid' then 'Paid' else 'Organic' end as paid,
+ MarketingData_C.vertical__c as vertical,
+ MarketingData_C.invoca_promo_description__c as invoca_promo_description,
+ MarketingData_C.campaign_name__c as invoca_campaign,
+  case when MarketingData_C.campaign_name__c = 'Print' then parse_date("%m-%Y",MarketingData_C.utm_content__c) else null end as traditional_publication_date,
   -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
-    case when lower("Marketing Data C".micro_device__c) in ('android', 'iphone') then 'mobile' when lower("Marketing Data C".micro_device__c) in ('ipad') then 'tablet' when lower("Marketing Data C".micro_device__c) is null then null else lower("Marketing Data C".micro_device__c) end as device,
- "Marketing Data C".key_presses__c as key_presses,
- "Marketing Data C".micro_first_page__c as micro_first_page,
-"Marketing Data C".micro_assist_page__c as micro_assist_page,
-  "Marketing Data C".micro_conv_page__c as micro_conv_page,
-    "Marketing Data C".requested_service__c as requested_service
+    case when LOWER(MarketingData_C.micro_device__c) in ('android', 'iphone') then 'mobile' when LOWER(MarketingData_C.micro_device__c) in ('ipad') then 'tablet' when LOWER(MarketingData_C.micro_device__c) is null then null else LOWER(MarketingData_C.micro_device__c) end as device,
+ MarketingData_C.key_presses__c as key_presses,
+ MarketingData_C.micro_first_page__c as micro_first_page,
+MarketingData_C.micro_assist_page__c as micro_assist_page,
+  MarketingData_C.micro_conv_page__c as micro_conv_page,
+    MarketingData_C.requested_service__c as requested_service
 
   
     FROM
-        lt_pa_salesforce.marketing_data__c AS "Marketing Data C" 
+        lt_pa_salesforce.Marketing_Data__c AS MarketingData_C 
     WHERE
-    "Marketing Data C".vertical__c = 'Asbestos'
+    MarketingData_C.vertical__c = 'Asbestos'
    
     and isdeleted is false

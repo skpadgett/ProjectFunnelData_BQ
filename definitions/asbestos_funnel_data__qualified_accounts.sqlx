@@ -16,26 +16,26 @@ config { type: "view" }
         account.createddate as account_createddatetime,
         CASE when Lead.marketing_data_attribution__c IS not null then 1 else null end AS is_qualified_account
     FROM
-        lt_pa_salesforce.account AS Account 
-        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        lt_pa_salesforce.Account AS account 
+        INNER JOIN lt_pa_salesforce.Lead AS Lead ON account.lead_attribution__c = lead.id
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
     WHERE
               
-        Account.effect__c in ('Unconfirmed Mesothelioma', 'Mesothelioma')  
-        AND Account.within_statute_of_limitations__c in ('Yes', 'Unknown')   
+        account.effect__c in ('Unconfirmed Mesothelioma', 'Mesothelioma')  
+        AND account.within_statute_of_limitations__c in ('Yes', 'Unknown')   
 
-        AND (("Account"."u_s_exposure__c" IN ('Yes')
+        AND ((account.u_s_exposure__c IN ('Yes')
 		and account.country_of_exposure__c is null)
 	   
 		or
-		("Account"."u_s_exposure__c" is null
+		(account.u_s_exposure__c is null
 	   and account.country_of_exposure__c in ('United States of America'))
 	   or 
-		("Account"."u_s_exposure__c" IN ('Yes')
+		(account.u_s_exposure__c IN ('Yes')
 			and account.country_of_exposure__c in ('United States of America')))
 	
 	    
-       AND "Account"."currently_represented__c" IN ('No',
+       AND account.currently_represented__c IN ('No',
                                                     'Yes, after arrival', 'Not Represented')  
   and lead.isdeleted is false
   and account.isdeleted is false

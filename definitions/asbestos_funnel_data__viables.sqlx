@@ -15,13 +15,13 @@ config { type: "view" }
         account.id as account_id,
         account.createddate as account_createddatetime,
         CASE when Lead.marketing_data_attribution__c is not null then 1 else null end AS is_all_viable,
-        CASE when Lead.marketing_data_attribution__c is not null and account.effect__c ILIKE '%mesothelioma%' then 1 else null end AS is_viable,
+        CASE when Lead.marketing_data_attribution__c is not null and LOWER(account.effect__c) LIKE '%mesothelioma%' then 1 else null end AS is_viable,
         account.effect__c as effect,
         account.sql_date__c as first_viable_datetime --replaced first_viable__c
        
     FROM
-        lt_pa_salesforce.account AS Account
-        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        lt_pa_salesforce.Account AS Account
+        INNER JOIN lt_pa_salesforce.Lead AS Lead ON account.lead_attribution__c = lead.id
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
     WHERE 
     account.is_sql__c is true

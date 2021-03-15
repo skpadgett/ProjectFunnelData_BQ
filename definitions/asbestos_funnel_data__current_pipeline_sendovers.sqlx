@@ -30,25 +30,25 @@ SELECT
   end AS is_current_pipeline_sendover,
   CASE
     when Lead.marketing_data_attribution__c is not null
-    and account.effect__c ilike '%mesothelioma%' and opportunity.sub_status__c not in ('Potential Call-In') then 1
+    and LOWER(account.effect__c) like '%mesothelioma%' and opportunity.sub_status__c not in ('Potential Call-In') then 1
     else null
   end AS is_mktg_current_pipeline_sendover,
   Opportunity.stage_sendover_date_time__c as current_pipeline_traditional_sendover_datetime,
   opportunity.stage_potential_call_in_date_time__c as current_pipeline_pci_datetime,
   opportunity.stage_warm_sendover_date_time__c as current_pipeline_warm_transfer_datetime
 FROM
-  lt_pa_salesforce.account AS Account
-  INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+  lt_pa_salesforce.Account AS account
+  INNER JOIN lt_pa_salesforce.Lead AS lead ON account.lead_attribution__c = lead.id
   INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
-  INNER JOIN lt_pa_salesforce.opportunity AS Opportunity ON account.id = opportunity.accountid
+  INNER JOIN lt_pa_salesforce.Opportunity AS opportunity ON account.id = opportunity.accountid
 WHERE
-  Opportunity.status__c = 'Send Over'
-  and Opportunity.sub_status__c in (
+  opportunity.status__c = 'Send Over'
+  and opportunity.sub_status__c in (
     'Traditional',
     'Warm Transfer',
     'Potential Call-In'
   )
-  and Account.status__c not in (
+  and account.status__c not in (
     'Closed',
     'Closed Lost',
     'Inactive'

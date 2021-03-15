@@ -164,12 +164,12 @@ max(
 
 
 FROM
-  lt_pa_salesforce.opportunity as Opportunity
-  inner join lt_pa_salesforce.account AS Account ON account.id = opportunity.accountid
-  INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+  lt_pa_salesforce.Opportunity as Opportunity
+  inner join lt_pa_salesforce.Account AS account ON account.id = opportunity.accountid
+  INNER JOIN lt_pa_salesforce.Lead AS lead ON account.lead_attribution__c = lead.id
   INNER JOIN ${ref("asbestos_funnel_data__raw_mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
-  left join lt_pa_salesforce.status_history__c on Opportunity.id = status_history__c.opportunity__c
-  left join lt_pa_salesforce.account as medical_facility_accounts on opportunity.medical_facility__c = medical_facility_accounts.id 
+  left join lt_pa_salesforce.Status_History__c on Opportunity.id = status_history__c.opportunity__c
+  left join lt_pa_salesforce.Account as medical_facility_accounts on opportunity.medical_facility__c = medical_facility_accounts.id 
 WHERE
   lead.isdeleted is false
   and account.isdeleted is false

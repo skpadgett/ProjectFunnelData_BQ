@@ -11,35 +11,35 @@ config {
 */
 -- with final_data as (
 select
-  distinct A.md_id,
-  A.redis_id,
-  A.campaign__c :: varchar as ad_campaign_id,
-  A.adgroup__c :: varchar as ad_adgroup_id,
-  A.keyword__c :: varchar as ad_keyword_id,
-  A.creative__c :: varchar as ad_creative_id,
+  distinct A.md_id as md_id,
+  A.redis_id as redis_id,
+  cast(A.campaign__c as string) as ad_campaign_id,
+  cast(A.adgroup__c as string) as ad_adgroup_id,
+  cast(A.keyword__c as string) as ad_keyword_id,
+  cast(A.creative__c as string) as ad_creative_id,
   CASE
     WHEN website = 'drugwatch.com'
-    AND source = 'Facebook' THEN '1402060363429896' :: varchar
-    ELSE '-1' :: varchar
+    AND utm_source = 'Facebook' THEN cast('1402060363429896' as string)
+    ELSE cast('-1' as string)
   END as ad_account_id,
-  A.source :: varchar as utm_source,
-  A.website :: varchar,
-  A.vertical :: varchar,
-  A.paid :: varchar,
-  A.cause :: varchar,
-  A.lead_type :: varchar,
-  A.marketing_channels :: varchar,
-  A.traffic_source :: varchar,
-  A.lead_id,
-  coalesce(A.mds, 0) :: int2 as is_md,
-  coalesce(A.leads, 0) :: int2 as is_lead,
-  coalesce(B.qualified_leads, 0) :: int2 as is_qualified_lead,
-  coalesce(C.customers, 0) :: int2 as is_customer,
-  coalesce(C.revisions, 0) :: int2 as is_revision,
+  cast(A.utm_source as string) as utm_source,
+  cast(A.website as string) as website,
+  cast(A.vertical as string) as vertical,
+  cast(A.paid as string) as paid,
+  cast(A.cause as string) as cause,
+  cast(A.lead_type as string) as lead_type,
+  cast(A.marketing_channels as string) as marketing_channels,
+  cast(A.traffic_source as string) as traffic_source,
+  A.lead_id as lead_id,
+  cast(coalesce(A.mds, 0) as int64) as is_md,
+  cast(coalesce(A.leads, 0) as int64) as is_lead,
+  cast(coalesce(B.qualified_leads, 0) as int64) as is_qualified_lead,
+  cast(coalesce(C.customers, 0) as int64) as is_customer,
+  cast(coalesce(C.revisions, 0) as int64) as is_revision,
   A.md_created_date as md_createddate,
-  A.lead_created_date :: timestamp as lead_createddate,
-  B.qualified_date :: timestamp,
-  C.signing_date :: timestamp as customer_signeddate
+  cast(A.lead_created_date as timestamp) as lead_createddate,
+  cast(B.qualified_date as timestamp) as qualified_date,
+  cast(C.signing_date as timestamp) as customer_signeddate
 from
   ${ref("mass_torts_funnel_data__leads")} as A
   left join ${ref("mass_torts_funnel_data__qualified_leads")} as B on A.md_id = B.md_id

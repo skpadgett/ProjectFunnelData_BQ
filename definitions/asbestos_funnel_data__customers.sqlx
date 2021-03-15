@@ -29,14 +29,14 @@ with customers_setup as (
         opportunity.status__c as opportunity_status,
         opportunity.sub_status__c as opportunity_sub_status
     FROM 
-        lt_pa_salesforce.account AS Account
-        INNER JOIN lt_pa_salesforce.lead AS Lead ON account.lead_attribution__c = lead.id
+        lt_pa_salesforce.Account AS account
+        INNER JOIN lt_pa_salesforce.Lead AS lead ON account.lead_attribution__c = lead.id
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
-        INNER JOIN lt_pa_salesforce.opportunity as Opportunity ON account.id = opportunity.accountid
+        INNER JOIN lt_pa_salesforce.Opportunity as opportunity ON account.id = opportunity.accountid
     WHERE 
     --account.effect__c changed from ILIKE '%Mesothelioma%' to = 'Mesothelioma' in 12/2019 
-        Account.effect__c in ('Mesothelioma','Lung Cancer')
-         AND Opportunity.stage_signed_date_time__c is not null
+        account.effect__c in ('Mesothelioma','Lung Cancer')
+         AND opportunity.stage_signed_date_time__c is not null
         
 
   and lead.isdeleted is false

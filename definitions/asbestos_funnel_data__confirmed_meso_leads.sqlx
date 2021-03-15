@@ -17,11 +17,11 @@ SELECT DISTINCT
     
      CASE when Lead.marketing_data_attribution__c is not null and mds.marketing_channels != 'Sales' then 1 else null end AS is_mktg_confirmed_meso_lead
     FROM
-        lt_pa_salesforce.lead AS Lead 
+        lt_pa_salesforce.Lead AS Lead 
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON lead.marketing_data_attribution__c = mds.md_id
-        inner join lt_pa_salesforce.marketing_data__c on mds.md_id = marketing_data__c.id
+        inner join lt_pa_salesforce.Marketing_Data__c on mds.md_id = marketing_data__c.id
     WHERE 
-        lead.patient_diagnosis__c ILIKE '%Mesothelioma%'   
+        LOWER(lead.patient_diagnosis__c) LIKE '%mesothelioma%'   
   and lead.isdeleted is false
   and lead.test_or_spam__c is false
  

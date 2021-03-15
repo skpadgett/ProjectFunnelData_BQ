@@ -13,26 +13,26 @@ config { type: "view" }
  with weitz_customers AS (
 --gets customer information for weitz leads. partner_opportunity__c.retainer_signed_date__c is used to determine signing date
     SELECT DISTINCT 
-    partner_opportunity__c."marketing_data__c" AS md_id,
-      partner_opportunity__c."retainer_signed_date__c" as signing_date,
+    partner_opportunity__c.marketing_data__c as md_id,
+      partner_opportunity__c.retainer_signed_date__c as signing_date,
       case when partner_opportunity__c.marketing_data__c is not null then 1 else null end as customers
-FROM "lt_pa_salesforce"."partner_opportunity__c"
+FROM lt_pa_salesforce.Partner_Opportunity__c
       left join ${ref("mass_torts_funnel_data__leads")} as drugwatch_leads on partner_opportunity__c.marketing_data__c = drugwatch_leads.md_id
-WHERE (partner_opportunity__c."retainer_signed_date__c" AT TIME ZONE 'UTC') is not null
+WHERE (partner_opportunity__c.retainer_signed_date__c ) is not null
        ),
  other_customers AS (
  -- gets customer information for non-weitz leads. lead.signed_date__c is used to determine signing date    
     SELECT DISTINCT
    lead.marketing_data_attribution__c as md_id,
-       lead."signed_date__c" as signing_date,
+       lead.signed_date__c as signing_date,
    case when lead.marketing_data_attribution__c is not null then 1 else null end as customers,
    CASE
             WHEN Lead.mesh_revision__c = 'Yes' then 1
             ELSE null
         END AS revisions
-FROM "lt_pa_salesforce"."lead" 
+FROM lt_pa_salesforce.Lead 
    inner join ${ref("mass_torts_funnel_data__leads")} as drugwatch_leads on lead.marketing_data_attribution__c = drugwatch_leads.md_id
-WHERE ("Lead"."signed_date__c" AT TIME ZONE 'UTC') is not null     
+WHERE (Lead.signed_date__c ) is not null     
 )
     select distinct 
   md_id,
@@ -47,7 +47,7 @@ WHERE ("Lead"."signed_date__c" AT TIME ZONE 'UTC') is not null
   md_id,
   signing_date,
   customers,
-  null::int as revisions
+  cast(null as int64) as revisions
   from weitz_customers
 
   

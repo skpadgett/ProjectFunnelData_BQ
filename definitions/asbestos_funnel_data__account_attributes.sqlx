@@ -6,8 +6,8 @@ select
 account.account_id,
 account.lead_id,
 account.md_id,
-"user"."name" as account_assist_pa,
+User.name as account_assist_pa,
 accountteammember.teammemberrole as account_assist_pa_role
 from ${ref("asbestos_funnel_data__accounts")} as account
 left join lt_pa_salesforce.AccountTeamMember on account.account_id = AccountTeamMember.accountid
-left join lt_pa_salesforce."user" on AccountTeamMember.userid = "user".id
+left join lt_pa_salesforce.User on AccountTeamMember.userid = User.id
