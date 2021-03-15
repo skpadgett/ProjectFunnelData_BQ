@@ -12,60 +12,60 @@ config {
 -- Joins Lead , MQL, and QL data together for all 3 datasets: secondary annuity, mortgage note, and primary annuity
 with final_data AS (
   SELECT
-    DISTINCT A.md_id, 
-    A.md_created_date,
-    A.redis_id,
+    DISTINCT A.md_id as md_id, 
+    A.md_created_date as created_date,
+    A.redis_id as redis_id,
     A.mds as is_md,
     A.campaign__c as ad_campaign_id,
     A.adgroup__c as ad_adgroup_id,
     A.keyword__c as ad_keyword_id,
     A.creative__c as ad_creative_id,
-    A.`source`,
-    A.website,
-    A.vertical,
-    A.paid,
-    A.cause,
-    A.lead_type,
-    A.marketing_channels,
-    A.traffic_source,
-    A.lead_id,
-    A.lead_created_date,
+    A.utm_source as utm_source,
+    A.website as website,
+    A.vertical as vertical,
+    A.paid as paid,
+    A.cause as cause,
+    A.lead_type as lead_type,
+    A.marketing_channels as marketing_channels,
+    A.traffic_source as traffic_source,
+    A.lead_id as lead_id,
+    A.lead_created_date as lead_created_date,
     A.leads as is_lead,
     A.raw_leads as is_raw_lead,
     B.qualified_leads as is_qualified_lead,
-    B.qualified_date,
-    C.is_marketing_qualified_lead,
-    A.business_partner
+    B.qualified_date as qualified_date,
+    C.is_marketing_qualified_lead as is_marketing_qualified_lead,
+    A.business_partner as business_partner
   FROM
     ${ref("annuity_secondary_funnel_data__leads")} as A
     LEFT JOIN ${ref("annuity_secondary_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
     LEFT JOIN ${ref("annuity_secondary_funnel_data__marketing_qualified_leads")} as C on A.lead_id = C.lead_id
   UNION ALL
   SELECT
-    DISTINCT A.md_id,
-    A.md_created_date,
-    A.redis_id,
+    DISTINCT A.md_id as md_id,
+    A.md_created_date as md_created_date,
+    A.redis_id as redis_id,
     A.mds as is_md,
     A.campaign__c as ad_campaign_id,
     A.adgroup__c as ad_adgroup_id,
     A.keyword__c as ad_keyword_id,
     A.creative__c as ad_creative_id,
-    A.`source`,
-    A.website,
-    A.vertical,
-    A.paid,
-    A.cause,
-    A.lead_type,
-    A.marketing_channels,
-    A.traffic_source,
-    A.lead_id,
-    A.lead_created_date,
+    A.utm_source as utm_source,
+    A.website as website,
+    A.vertical as vertical,
+    A.paid as paid,
+    A.cause as cause,
+    A.lead_type as lead_type,
+    A.marketing_channels as marketing_channels,
+    A.traffic_source as traffic_source,
+    A.lead_id as lead_id,
+    A.lead_created_date as lead_created_date,
     A.leads as is_lead,
     A.raw_leads as is_raw_lead,
     B.qualified_leads as is_qualified_lead,
-    B.qualified_date,
-    cast(null as int) as is_marketing_qualified_lead,
-    A.business_partner
+    B.qualified_date as qualified_date,
+    cast(null as int64) as is_marketing_qualified_lead,
+    A.business_partner as business_partner
   FROM
     ${ref("mortgage_note_funnel_data__leads")} as A
     LEFT JOIN ${ref("mortgage_note_funnel_data__qualified_leads")} as B on A.lead_id = B.lead_id
@@ -79,7 +79,7 @@ with final_data AS (
     A.adgroup__c as ad_adgroup_id,
     A.keyword__c as ad_keyword_id,
     A.creative__c as ad_creative_id,
-    A.`source`,
+    A.utm_source,
     A.website,
     A.vertical,
     A.paid,
@@ -91,8 +91,8 @@ with final_data AS (
     A.lead_created_date,
     A.leads as is_lead,
     A.raw_leads as is_raw_lead,
-    cast(null as int) as is_qualified_lead,
-    cast(null as date) as qualified_date,
+    cast(null as int64) as is_qualified_lead,
+    cast(null as timestamp) as qualified_date,
     B.is_marketing_qualified_lead,
     A.business_partner 
   FROM
@@ -104,36 +104,36 @@ SELECT
   DISTINCT md_id,
  redis_id,
   lead_id,
-  cast(md_created_date as timestamp) as md_createddate,
+  cast(created_date as timestamp) as md_createddate,
   cast(lead_created_date as timestamp) as lead_createddate,
-  cast(qualified_date as timestamp),
-  cast(website as varchar),
-  cast(vertical as varchar),
-  cast(paid as varchar),
-  cast(lead_type as varchar),
-  cast(marketing_channels as varchar),
-  cast(traffic_source as varchar),
-  cast(`source` as varchar) as utm_source,
+  cast(qualified_date as timestamp) as qualified_date,
+  cast(website as string) as website,
+  cast(vertical as string) as vertical,
+  cast(paid as string) as paid,
+  cast(lead_type as string)as lead_type,
+  cast(marketing_channels as string) as marketing_channels,
+  cast(traffic_source as string) as traffic_source,
+  cast(utm_source as string) as utm_source,
   CASE
     WHEN website = 'annuity.org'
-    AND `source` = 'AdWords' THEN cast('7004720340' as varchar)
+    AND utm_source = 'AdWords' THEN cast('7004720340' as string)
     WHEN website = 'annuity.org'
-    AND `source` = 'Bing' THEN cast('43004227' as varchar)
+    AND utm_source = 'Bing' THEN cast('43004227' as string)
     WHEN website = 'annuity.org'
-    AND `source` = 'Facebook' THEN cast('1389534567937754' as varchar)
+    AND utm_source = 'Facebook' THEN cast('1389534567937754' as string)
     WHEN website = 'structuredsettlements.com'
-    AND `source` = 'AdWords' THEN cast('6197331359' as varchar)
-    ELSE cast('-1' as varchar)
+    AND utm_source = 'AdWords' THEN cast('6197331359' as string)
+    ELSE cast('-1' as string)
   END as ad_account_id,
-  cast(ad_campaign_id as varchar),
-  cast(ad_adgroup_id as varchar),
-  cast(ad_keyword_id as varchar),
-  cast(ad_creative_id as varchar),
-  cast(business_partner as varchar),
-  cast(COALESCE(is_md,0) as int2) as is_md,
-  cast(coalesce(is_lead,0) as int2) as is_lead,
-  cast(coalesce(is_raw_lead,0) as int2) as is_raw_lead,
-  cast(coalesce(is_qualified_lead,0) as int2) as is_qualified_lead,
-cast(coalesce(is_marketing_qualified_lead,0) as int2) as is_marketing_qualified_lead
+  cast(ad_campaign_id as string) as ad_campaign_id,
+  cast(ad_adgroup_id as string) as ad_adgroup_id,
+  cast(ad_keyword_id as string) as ad_keyword_id,
+  cast(ad_creative_id as string) as ad_creative_id,
+  cast(business_partner as string) as business_partner,
+  cast(COALESCE(is_md,0) as int64) as is_md,
+  cast(coalesce(is_lead,0) as int64) as is_lead,
+  cast(coalesce(is_raw_lead,0) as int64) as is_raw_lead,
+  cast(coalesce(is_qualified_lead,0) as int64) as is_qualified_lead,
+cast(coalesce(is_marketing_qualified_lead,0) as int64) as is_marketing_qualified_lead
  
             FROM final_data

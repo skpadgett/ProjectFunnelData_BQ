@@ -37,7 +37,7 @@ config {
     WHEN 'bing' THEN 'Bing'
     WHEN 'facebook' THEN 'Facebook'
     ELSE marketing_data__c.utm_source__c
-  end AS source,
+  end AS utm_source,
   lower(marketing_data__c.website__c) as website,
   marketing_data__c.vertical__c as vertical,
   CASE
