@@ -20,7 +20,7 @@ with final_data AS (
     A.adgroup__c as ad_adgroup_id,
     A.keyword__c as ad_keyword_id,
     A.creative__c as ad_creative_id,
-    A.source,
+    A.`source`,
     A.website,
     A.vertical,
     A.paid,
@@ -50,7 +50,7 @@ with final_data AS (
     A.adgroup__c as ad_adgroup_id,
     A.keyword__c as ad_keyword_id,
     A.creative__c as ad_creative_id,
-    A.source,
+    A.`source`,
     A.website,
     A.vertical,
     A.paid,
@@ -64,7 +64,7 @@ with final_data AS (
     A.raw_leads as is_raw_lead,
     B.qualified_leads as is_qualified_lead,
     B.qualified_date,
-    null :: int as is_marketing_qualified_lead,
+    cast(null as int) as is_marketing_qualified_lead,
     A.business_partner
   FROM
     ${ref("mortgage_note_funnel_data__leads")} as A
@@ -79,7 +79,7 @@ with final_data AS (
     A.adgroup__c as ad_adgroup_id,
     A.keyword__c as ad_keyword_id,
     A.creative__c as ad_creative_id,
-    A.source,
+    A.`source`,
     A.website,
     A.vertical,
     A.paid,
@@ -91,8 +91,8 @@ with final_data AS (
     A.lead_created_date,
     A.leads as is_lead,
     A.raw_leads as is_raw_lead,
-    null :: int as is_qualified_lead,
-    null :: date as qualified_date,
+    cast(null as int) as is_qualified_lead,
+    cast(null as date) as qualified_date,
     B.is_marketing_qualified_lead,
     A.business_partner 
   FROM
@@ -104,36 +104,36 @@ SELECT
   DISTINCT md_id,
  redis_id,
   lead_id,
-  md_created_date:: timestamp as md_createddate,
-  lead_created_date:: timestamp as lead_createddate,
-  qualified_date::timestamp,
-  website :: varchar,
-  vertical :: varchar,
-  paid :: varchar,
-  lead_type :: varchar,
-  marketing_channels :: varchar,
-  traffic_source :: varchar,
-  source :: varchar as utm_source,
+  cast(md_created_date as timestamp) as md_createddate,
+  cast(lead_created_date as timestamp) as lead_createddate,
+  cast(qualified_date as timestamp),
+  cast(website as varchar),
+  cast(vertical as varchar),
+  cast(paid as varchar),
+  cast(lead_type as varchar),
+  cast(marketing_channels as varchar),
+  cast(traffic_source as varchar),
+  cast(`source` as varchar) as utm_source,
   CASE
     WHEN website = 'annuity.org'
-    AND source = 'AdWords' THEN '7004720340' :: varchar
+    AND `source` = 'AdWords' THEN cast('7004720340' as varchar)
     WHEN website = 'annuity.org'
-    AND source = 'Bing' THEN '43004227' :: varchar
+    AND `source` = 'Bing' THEN cast('43004227' as varchar)
     WHEN website = 'annuity.org'
-    AND source = 'Facebook' THEN '1389534567937754' :: varchar
+    AND `source` = 'Facebook' THEN cast('1389534567937754' as varchar)
     WHEN website = 'structuredsettlements.com'
-    AND source = 'AdWords' THEN '6197331359' :: varchar
-    ELSE '-1' :: varchar
+    AND `source` = 'AdWords' THEN cast('6197331359' as varchar)
+    ELSE cast('-1' as varchar)
   END as ad_account_id,
-  ad_campaign_id::varchar,
-  ad_adgroup_id::varchar,
-  ad_keyword_id::varchar,
-  ad_creative_id::varchar,
-  business_partner::varchar,
-  COALESCE(is_md,0)::int2 as is_md,
-  coalesce(is_lead,0)::int2 as is_lead,
-  coalesce(is_raw_lead,0)::int2 as is_raw_lead,
-  coalesce(is_qualified_lead,0)::int2 as is_qualified_lead,
-coalesce(is_marketing_qualified_lead,0)::int2 as is_marketing_qualified_lead
+  cast(ad_campaign_id as varchar),
+  cast(ad_adgroup_id as varchar),
+  cast(ad_keyword_id as varchar),
+  cast(ad_creative_id as varchar),
+  cast(business_partner as varchar),
+  cast(COALESCE(is_md,0) as int2) as is_md,
+  cast(coalesce(is_lead,0) as int2) as is_lead,
+  cast(coalesce(is_raw_lead,0) as int2) as is_raw_lead,
+  cast(coalesce(is_qualified_lead,0) as int2) as is_qualified_lead,
+cast(coalesce(is_marketing_qualified_lead,0) as int2) as is_marketing_qualified_lead
  
             FROM final_data

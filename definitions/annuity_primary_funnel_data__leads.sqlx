@@ -63,8 +63,8 @@ config {
   case when lower(marketing_data__c.micro_device__c) in ('android', 'iphone') then 'mobile' when lower(marketing_data__c.micro_device__c) in ('ipad') then 'tablet' when lower(marketing_data__c.micro_device__c) is null then null else lower(marketing_data__c.micro_device__c) end as device,
   marketing_data__c.business_partner__c as business_partner
 FROM
-  lt_pa_salesforce.marketing_data__c
-  INNER JOIN lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c
+  lt_pa_salesforce.Marketing_Data__c
+  INNER JOIN lt_pa_salesforce.Lead on marketing_data__c.id = lead.marketing_data_attribution__c
 WHERE
   marketing_data__c.vertical__c in ('APM')
   AND marketing_data__c.isdeleted is false

@@ -20,7 +20,7 @@ with annuity_qualified_leads_paid AS (
       ELSE null
     END AS qualified_leads
   FROM
-    lt_pa_salesforce.lead
+    lt_pa_salesforce.Lead as lead
     INNER JOIN ${ref("annuity_secondary_funnel_data__leads")} as annuity_leads ON lead.id = annuity_leads.lead_id
   WHERE
     lead.md_vertical__c IN ('Annuity')
@@ -46,7 +46,7 @@ annuity_qualified_leads_organic AS (
       ELSE null
     END AS qualified_leads
   FROM
-    lt_pa_salesforce.lead
+    lt_pa_salesforce.Lead as lead
     INNER JOIN ${ref("annuity_secondary_funnel_data__leads")} as annuity_leads ON lead.id = annuity_leads.lead_id
   WHERE
     lead.md_vertical__c IN ('Annuity')

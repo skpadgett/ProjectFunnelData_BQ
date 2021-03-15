@@ -18,15 +18,15 @@ marketing_data__c.micro_conv_page__c as micro_conv_page
 
 from 
 ${ref("annuity_primary_funnel_data__leads")} as annuity_leads
-inner join lt_pa_salesforce.marketing_data__c on annuity_leads.md_id = marketing_data__c.id
-inner join lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c
+inner join lt_pa_salesforce.Marketing_Data__c on annuity_leads.md_id = Marketing_Data__c.id
+inner join lt_pa_salesforce.Lead on Marketing_Data__c.id = Lead.marketing_data_attribution__c
 where
-((marketing_data__c.is_mql__c is true)
-or (marketing_data__c.requested_service_detail__c in ('Annuity Products and Rates','Retirement Planning' ))
+((Marketing_Data__c.is_mql__c is true)
+or (Marketing_Data__c.requested_service_detail__c in ('Annuity Products and Rates','Retirement Planning' ))
 
-       OR (marketing_data__c.key_presses__c in ('[1]','[3]')))
+       OR (Marketing_Data__c.key_presses__c in ('[1]','[3]')))
        -- PER STEVE LACLAIR, JUN 17 2020 IS WHEN IVR KEYPRESS WENT INTO EFFECT. WE CANNOT ACCURATELY MEASURE THIS KPI IN TERMS OF PHONE LEADS/IVR KEYPRESS PRIOR TO THIS DATE
        AND annuity_leads.lead_created_date >= '2020-06-17'
-       AND marketing_data__c.test_or_spam__c is false
-       AND lead.test_or_spam__c is false
+       AND Marketing_Data__c.test_or_spam__c is false
+       AND Lead.test_or_spam__c is false
        

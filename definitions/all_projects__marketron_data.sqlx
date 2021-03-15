@@ -54,7 +54,7 @@ conv_page.url as conv_page_url
 
 
 
-from lt_pa_salesforce.marketing_data__c
+from lt_pa_salesforce.Marketing_Data__c
 full outer join pages as first_page on lower(marketing_data__c.website__c) || rtrim(marketing_data__c.micro_first_page__c,'?') = first_page.url_trimmed
 full outer join pages as conv_page on lower(marketing_data__c.website__c) || rtrim(marketing_data__c.micro_conv_page__c,'?') = conv_page.url_trimmed
 full outer join pages as assist_page on lower(marketing_data__c.website__c) || rtrim(marketing_data__c.micro_assist_page__c,'?') = assist_page.url_trimmed

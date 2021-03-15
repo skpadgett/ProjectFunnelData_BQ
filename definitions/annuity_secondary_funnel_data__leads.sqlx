@@ -69,18 +69,18 @@ case when lower(marketing_data__c.micro_device__c) in ('android', 'iphone') then
 marketing_data__c.business_partner__c as business_partner
 
 FROM
-  lt_pa_salesforce.marketing_data__c
-  INNER JOIN lt_pa_salesforce.lead on marketing_data__c.id = lead.marketing_data_attribution__c
+  lt_pa_salesforce.Marketing_Data__c
+  INNER JOIN lt_pa_salesforce.Lead on Marketing_Data__c.id = Lead.marketing_data_attribution__c
 WHERE
   
- marketing_data__c.vertical__c in ('Annuity')
-  AND marketing_data__c.isdeleted is false
-  AND lead.isdeleted is false
+ Marketing_Data__c.vertical__c in ('Annuity')
+  AND Marketing_Data__c.isdeleted is false
+  AND Lead.isdeleted is false
   AND (
     (
-      lead.cbc_annuity_type__c not in ('Deed Street Lead RT', 'Mortgage Note')
+      Lead.cbc_annuity_type__c not in ('Deed Street Lead RT', 'Mortgage Note')
     )
-    OR (lead.cbc_annuity_type__c is null)
+    OR (Lead.cbc_annuity_type__c is null)
 
   )
 
