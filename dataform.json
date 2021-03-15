@@ -1,5 +1,6 @@
 {
     "defaultSchema": "lt_dataform",
     "assertionSchema": "dataform_assertions",
-    "warehouse": "bigquery"
+    "warehouse": "bigquery",
+    "defaultDatabase": "bigquery-306016"
 }
