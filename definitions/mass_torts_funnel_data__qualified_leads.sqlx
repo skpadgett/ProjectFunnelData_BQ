@@ -25,7 +25,7 @@ WHERE (partner_opportunity__c.retainer_out_date__c) is not null
     lead.prospective_date__c as qualified_date,
       case when lead.marketing_data_attribution__c is not null then 1 else null end as qualified_leads
 FROM lt_pa_salesforce.Lead 
-inner join ${ref("mass_torts_funnel_data__leads")} as drugwatch_leads on lead.marketing_data_attribution__c = drugwatch_leads.md_id
+inner join ${ref("mass_torts_funnel_data__leads")} as drugwatch_leads on Lead.marketing_data_attribution__c = drugwatch_leads.md_id
 WHERE (lead.prospective_date__c ) is not null
 
        )

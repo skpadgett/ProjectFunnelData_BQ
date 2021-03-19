@@ -18,8 +18,9 @@ config { type: "view" }
         marketing_data__c.lead_type__c,
         marketing_data__c.effect__c,
         marketing_data__c.chat_topic_answer__c,
-        transactions.keypresses,
-        transactions.signal_name,
+        -- items temporarily removed until Invoca data is integrated into BQ
+        /*transactions.keypresses,
+        transactions.signal_name,*/
         mds.marketing_channels,
         marketing_data__c.is_mql__c
 
@@ -28,14 +29,15 @@ config { type: "view" }
         lt_pa_salesforce.Lead AS lead  
         INNER JOIN ${ref("asbestos_funnel_data__mds")} as mds ON Lead.marketing_data_attribution__c = mds.md_id
         inner join lt_pa_salesforce.Marketing_Data__c on mds.md_id = marketing_data__c.id
-        full outer join lt__invoca.Transactions on marketing_data__c.call_id__c = transactions.transaction_id
+        -- join temporarily removed until Invoca data is integrated into BQ
+       /* full outer join lt__invoca.Transactions on marketing_data__c.call_id__c = transactions.transaction_id*/
     WHERE
         lead.test_or_spam__c IS FALSE         
         
         AND mds.marketing_channels != 'Sales'
   and lead.isdeleted is false
 
-  --begin lead-type specific criteria
+  /*--begin lead-type specific criteria
   and (
       (marketing_data__c.lead_type__c = 'Phone'
       and transactions.keypresses = '[1]' 
@@ -46,5 +48,8 @@ config { type: "view" }
       or 
       ( LOWER(mds.md_effect) LIKE '%mesothelioma%'  
       and ((marketing_data__c.lead_type__c = 'Form' )
-      or marketing_data__c.lead_type__c is null)))
+      or marketing_data__c.lead_type__c is null)))*/
+
+      -- temp workaround until we have Invoca connected to BQ
+  and marketing_data__c.is_mql__c is true    
 --Data for MQL KPI starts 09-21-2020 for Chat leads and 09-28-2020 for Phone leads. FB Lead Ads are not currently included.

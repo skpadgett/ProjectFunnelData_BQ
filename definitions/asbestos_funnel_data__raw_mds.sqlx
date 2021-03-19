@@ -36,7 +36,7 @@ config { type: "view" }
  MarketingData_C.vertical__c as vertical,
  MarketingData_C.invoca_promo_description__c as invoca_promo_description,
  MarketingData_C.campaign_name__c as invoca_campaign,
-  case when MarketingData_C.campaign_name__c = 'Print' then parse_date("%m-%Y",MarketingData_C.utm_content__c) else null end as traditional_publication_date,
+  case when MarketingData_C.campaign_name__c = 'Print' then PARSE_DATE("%d/%m/%Y", "01/"||MarketingData_C.utm_content__c) else null end as traditional_publication_date,
   -- we are using utm content here for traditional spend publication date, but it also contains keyword information for PPC
     case when LOWER(MarketingData_C.micro_device__c) in ('android', 'iphone') then 'mobile' when LOWER(MarketingData_C.micro_device__c) in ('ipad') then 'tablet' when LOWER(MarketingData_C.micro_device__c) is null then null else LOWER(MarketingData_C.micro_device__c) end as device,
  MarketingData_C.key_presses__c as key_presses,
