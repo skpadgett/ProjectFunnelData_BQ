@@ -12,7 +12,7 @@ config {
 -- gets base information for secondary annuity leads FROM MD & Leads tables
 
   SELECT
-  DISTINCT Marketing_Data__c.id AS ms_id,
+  DISTINCT Marketing_Data__c.id AS md_id,
   marketing_data__c.redis_id__c as redis_id,
   marketing_data__c.createddate AS md_created_date,
   CASE
